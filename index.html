@@ -3,276 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>期中考戰情室 - 究極分頁版</title>
+    <title>期中考戰備小屋 V2 - 小豆芽升級版</title>
     <style>
         :root {
-            --bg-color: #050b14;
-            --panel-bg: rgba(16, 25, 43, 0.85);
-            --text-main: #e2e8f0;
-            --text-muted: #64748b;
-            --accent: #00f0ff;
-            --accent-glow: rgba(0, 240, 255, 0.6);
-            --success: #00ff66;
-            --success-glow: rgba(0, 255, 102, 0.6);
-            --danger: #ff003c;
+            --bg-color: #f0f8ff;
+            --panel-bg: #ffffff;
+            --text-main: #34495e;
+            --text-muted: #95a5a6;
+            --accent: #74b9ff;
+            --accent-shadow: rgba(116, 185, 255, 0.3);
+            --success: #81c784;
+            --success-shadow: rgba(129, 199, 132, 0.3);
+            --danger: #ffb6b9;
+            --unfinished-border: #1e3799; 
+            --finished-border: #ffb6c1;   
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', 'Rounded Mplus 1c', 'Yu Gothic', sans-serif; }
         
         body { 
             background-color: var(--bg-color); 
             color: var(--text-main); 
             display: flex; 
             height: 100vh; 
-            padding: 20px; 
-            gap: 20px; 
+            padding: 15px; 
+            gap: 15px; 
             overflow: hidden;
-            background-image: 
-                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
-
-        /* 專注型呼吸燈特效 */
-        @keyframes breatheGlow {
-            0% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.05), inset 0 0 10px rgba(0, 240, 255, 0.02); }
-            50% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.05); }
-            100% { box-shadow: 0 0 10px rgba(0, 240, 255, 0.05), inset 0 0 10px rgba(0, 240, 255, 0.02); }
+            background-image: radial-gradient(circle, rgba(116, 185, 255, 0.15) 1px, transparent 1px);
+            background-size: 25px 25px;
         }
 
         .panel { 
             background: var(--panel-bg); 
-            border-radius: 12px; 
-            padding: 20px; 
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 20px; 
+            padding: 15px; 
+            border: 2px solid #e3f0ff; 
             backdrop-filter: blur(10px);
-            animation: breatheGlow 4s infinite ease-in-out; 
+            box-shadow: 0 4px 15px var(--accent-shadow);
+            display: flex;
+            flex-direction: column;
         }
 
-        .left-panel { flex: 2; display: flex; flex-direction: column; gap: 20px; z-index: 2; }
-        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 20px; z-index: 2; }
+        .left-panel { flex: 2; gap: 15px; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; }
 
-        h2 { 
-            border-bottom: 2px solid var(--accent); 
-            padding-bottom: 10px; 
-            margin-bottom: 15px; 
-            font-size: 1.5rem; 
-            text-shadow: 0 0 10px var(--accent-glow);
-            letter-spacing: 2px;
+        .header-row {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px dashed #d1e8ff; padding-bottom: 8px; margin-bottom: 12px; 
         }
+        h2 { color: var(--accent); font-size: 1.3rem; letter-spacing: 1px; font-weight: 700; }
+        
+        .btn-gear {
+            background: transparent; border: none; color: var(--text-muted); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; padding: 5px;
+            border-radius: 50%; transition: 0.3s;
+        }
+        .btn-gear svg { width: 20px; height: 20px; }
+        .btn-gear:hover { color: var(--accent); background: #eaf4ff; transform: rotate(45deg); }
 
-        /* 隱藏真實的 file input */
-        input[type="file"] { display: none; }
-        .custom-file-upload {
-            border: 1px solid var(--accent);
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--accent);
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: bold;
-            transition: 0.3s;
-            display: inline-block;
-            margin-bottom: 15px;
-            align-self: flex-start;
-        }
-        .custom-file-upload:hover {
-            background: var(--accent);
-            color: #000;
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        /* 大型電子時鐘 */
         #clock { 
-            font-size: 4.5rem; 
-            font-weight: 900; 
-            text-align: center; 
-            color: var(--accent); 
-            text-shadow: 0 0 20px var(--accent-glow); 
-            font-family: 'Courier New', Courier, monospace; 
-            letter-spacing: 4px; 
-            margin: 10px 0; 
+            font-size: 3.5rem; font-weight: 900; text-align: center; color: var(--accent); 
+            font-family: 'Poppins', sans-serif; letter-spacing: 2px; margin: 5px 0; 
+            background: #eaf4ff; border-radius: 15px; padding: 5px;
         }
 
-        /* 表單輸入區 */
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        input[type="text"], input[type="time"] { padding: 12px; border-radius: 6px; border: 1px solid rgba(0, 240, 255, 0.3); outline: none; background: rgba(0,0,0,0.5); color: white; transition: 0.3s; }
-        input[type="text"]:focus, input[type="time"]:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-        input[type="time"] { font-family: 'Courier New', Courier, monospace; }
+        .focus-noise-panel {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;
+        }
+        .noise-btn {
+            background: #fff; border: 2px solid #e3f0ff; color: var(--text-muted);
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .noise-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+        input[type="text"], input[type="time"], select { 
+            padding: 8px 12px; border-radius: 10px; border: 2px solid #eee; outline: none; 
+            background: #fff; color: var(--text-main); font-size: 0.9rem; 
+        }
+        input[type="text"] { flex: 2; min-width: 120px; }
+        select { flex: 1; cursor: pointer; color: var(--accent); font-weight: bold; }
+        input[type="time"] { 
+    width: 150px; /* 小豆芽施法：把這裡變寬！✨ */
+    font-family: 'Poppins', sans-serif; 
+}
+        
+        input[type="text"]:focus, input[type="time"]:focus, select:focus { border-color: var(--accent); box-shadow: 0 4px 10px var(--accent-shadow); }
         
         button { cursor: pointer; border: none; outline: none; transition: 0.3s; }
-        .btn-add { padding: 12px; border-radius: 6px; background: rgba(0, 240, 255, 0.1); color: var(--accent); font-weight: bold; border: 1px solid var(--accent); letter-spacing: 1px; }
-        .btn-add:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+        .btn-add { padding: 8px 15px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: bold; font-size: 0.9rem; }
+        .btn-add:hover { background: #5fa4e6; box-shadow: 0 4px 10px var(--accent-shadow); }
         
-        /* 升級版：圖示型刪除按鈕 */
         .btn-delete { 
-            background: rgba(255, 0, 60, 0.1); 
-            color: var(--danger); 
-            border: 1px solid var(--danger); 
-            border-radius: 6px; 
-            width: 32px; 
-            height: 32px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+            background: transparent; color: var(--danger); border: 2px solid var(--danger); 
+            border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
         }
-        .btn-delete svg { width: 16px; height: 16px; }
-        .btn-delete:hover { 
-            background: var(--danger); 
-            color: #fff; 
-            box-shadow: 0 0 10px rgba(255, 0, 60, 0.6); 
-        }
+        .btn-delete svg { width: 14px; height: 14px; }
+        .btn-delete:hover { background: var(--danger); color: #fff; }
 
-        /* 考試科目列表與進度條 */
-        #exam-list { overflow-y: auto; padding-right: 10px; max-height: calc(100vh - 180px); }
+        #exam-list { overflow-y: auto; padding-right: 5px; flex: 1; }
         #exam-list::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar { width: 6px; }
-        #exam-list::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+        #exam-list::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { background: #d1e8ff; border-radius: 4px; }
 
         .exam-item { 
-            background: rgba(0, 0, 0, 0.6); 
-            margin-bottom: 15px; 
-            padding: 15px; 
-            border-radius: 8px; 
-            border-left: 4px solid var(--text-muted);
-            transition: all 0.3s ease;
-        }
-        
-        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .exam-info { font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
-        .exam-time { color: var(--accent); font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; }
-        
-        /* 絲滑的純綠色時間條 */
-        .progress-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .progress-bar { 
-            height: 100%; 
-            width: 100%; 
-            background: var(--text-muted);
-            transition: width 1s linear, background-color 0.5s; 
-        }
-        .progress-active {
-            background: var(--success);
-            box-shadow: 0 0 15px var(--success-glow);
+            background: #fff; margin-bottom: 10px; padding: 10px; border-radius: 12px; 
+            border: 2px solid var(--unfinished-border); 
+            border-left-width: 6px; border-left-color: var(--unfinished-border);
+            transition: all 0.5s ease; position: relative;
         }
 
-        /* ===== 分頁系統 (Tabs) ===== */
-        .tabs { display: flex; border-bottom: 1px solid rgba(0, 240, 255, 0.3); margin-bottom: 15px; gap: 5px; }
+        .exam-finished {
+            border-color: var(--finished-border) !important; 
+            border-left-color: var(--finished-border) !important;
+            background-color: #fffafb; 
+        }
+
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .exam-info { font-size: 1.1rem; font-weight: bold; }
+        .exam-time { color: var(--accent); font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        
+        .progress-bg { width: 100%; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 100%; background: var(--text-muted); transition: width 1s linear, background-color 0.5s; }
+        .progress-active { background: var(--success); box-shadow: 0 4px 10px var(--success-shadow); }
+
+        .tabs-container {
+            display: flex; justify-content: space-between; align-items: flex-end; 
+            margin-bottom: 10px; border-bottom: 2px dashed #d1e8ff; padding-bottom: 5px;
+        }
+        .tabs { display: flex; gap: 5px; }
         .tab-btn {
-            background: transparent;
-            color: var(--text-muted);
-            padding: 10px 20px;
-            border-radius: 8px 8px 0 0;
-            font-size: 1rem;
-            font-weight: bold;
-            border: 1px solid transparent;
-            border-bottom: none;
-            transition: 0.3s;
+            background: #f4f9ff; color: var(--text-muted); padding: 6px 15px; border-radius: 10px 10px 0 0; 
+            font-size: 0.85rem; font-weight: bold; border: 2px solid transparent; border-bottom: none; transition: 0.3s;
         }
-        .tab-btn:hover { color: var(--text-main); }
-        .tab-btn.active {
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--accent);
-            border-color: rgba(0, 240, 255, 0.3);
-            text-shadow: 0 0 5px var(--accent-glow);
-        }
+        .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 -2px 10px var(--accent-shadow); }
         .tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
         .tab-content.active { display: flex; }
 
-        /* 提醒事項輸入框 */
-        textarea {
-            flex: 1;
-            width: 100%;
-            resize: none;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 8px;
-            color: var(--text-main);
-            padding: 15px;
-            font-size: 1rem;
-            line-height: 1.5;
-            outline: none;
-            transition: 0.3s;
-        }
-        textarea:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
-
-        /* 附加資料區 (檔案清單) */
-        .file-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1); }
-        .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; margin-right: 10px;}
-        .file-actions { display: flex; gap: 5px; }
-        .btn-load { background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 5px 10px; font-size: 0.8rem; }
-        .btn-load:hover { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent-glow); }
-        .btn-remove-file { background: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); border-radius: 4px; padding: 5px 8px; font-size: 0.8rem; }
-        .btn-remove-file:hover { background: var(--danger); color: white; border-color: var(--danger); }
-
-        /* 極簡音樂控制台 */
-        .audio-player-ui {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: auto;
-        }
+        textarea { flex: 1; width: 100%; resize: none; background: #fff; border: 2px solid #eee; border-radius: 12px; color: var(--text-main); padding: 12px; font-size: 16px; outline: none; }
         
-        .audio-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; }
-        .audio-title { color: var(--accent); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
-        .audio-controls { display: flex; gap: 8px; }
-        .icon-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1rem; border-radius: 6px; background: rgba(0, 240, 255, 0.1); color: var(--accent); border: 1px solid var(--accent); }
-        .icon-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent-glow); }
-        .icon-btn.stop { color: var(--text-muted); border-color: var(--text-muted); background: transparent; }
-        .icon-btn.stop:hover { color: var(--danger); border-color: var(--danger); box-shadow: 0 0 10px rgba(255,0,60,0.5); }
-        
-        .audio-progress-container { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; font-family: monospace; color: var(--text-muted); }
-        input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; outline: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); cursor: pointer; box-shadow: 0 0 5px var(--accent-glow); }
+        /* 字體調整控制列 */
+        .font-control {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+            padding: 5px 10px; background: #eaf4ff; border-radius: 10px;
+        }
+        .font-control span { font-size: 0.8rem; font-weight: bold; color: var(--accent); }
+        .font-control input[type="range"] { flex: 1; height: 4px; }
+
+        .audio-player-ui { background: #eaf4ff; border: 2px solid #e3f0ff; border-radius: 15px; padding: 10px; margin-top: auto; }
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #fff; width: 520px; max-width: 95%; border-radius: 20px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 3px solid #e3f0ff;
+        }
+        .modal-content h3 { color: var(--accent); text-align: center; margin-bottom: 20px; }
+        .period-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
+        .period-row input { width: 145px; padding: 8px; font-family: 'Poppins', sans-serif; text-align: center; border: 2px solid #eee; border-radius: 8px; }
+        .modal-actions { display: flex; justify-content: space-between; margin-top: 25px; }
+        .btn-modal { padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-cancel { background: #eee; color: var(--text-muted); }
+        .btn-save { background: var(--accent); color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="left-panel panel">
-        <h2>⚡ 戰術排程設定</h2>
-        <div class="input-group">
-            <input type="text" id="subject" placeholder="輸入科目 (如: 經濟學)" style="flex: 2;">
-            <input type="time" id="start-time" required>
-            <span style="align-self: center; color: var(--accent);">➤</span>
-            <input type="time" id="end-time" required>
-            <button class="btn-add" onclick="addExam()">寫入排程</button>
-        </div>
-        <div id="exam-list">
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>⚙️ 節次時間設定</h3>
+            <div id="period-settings-container"></div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeSettings()">取消</button>
+                <button class="btn-modal btn-save" onclick="saveSettings()">儲存設定</button>
             </div>
+        </div>
+    </div>
+
+    <div class="left-panel panel">
+        <div class="header-row">
+            <h2>🌱 小豆芽的學霸戰備小屋 2.0</h2>
+            <button class="btn-gear" onclick="openSettings()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="subject" placeholder="科目">
+            <select id="quick-select" onchange="applyQuickSelect()">
+                <option value="">快速選取</option>
+                <option value="1">第 1 節</option>
+                <option value="2">第 2 節</option>
+                <option value="3">第 3 節</option>
+                <option value="4">第 4 節</option>
+                <option value="5">第 5 節</option>
+                <option value="6">第 6 節</option>
+                <option value="7">第 7 節</option>
+            </select>
+            <input type="time" id="start-time">
+            <input type="time" id="end-time">
+            <button class="btn-add" onclick="addExam()">✨ 新增</button>
+        </div>
+        <div id="exam-list"></div>
     </div>
 
     <div class="right-panel">
         <div class="panel">
-            <h2>⏳ 系統時間</h2>
             <div id="clock">00:00:00</div>
+            <div class="focus-noise-panel">
+                <button class="noise-btn" id="btn-rain" onclick="toggleNoise('rain')">🌧️ 下雨聲</button>
+                <button class="noise-btn" id="btn-deep" onclick="toggleNoise('brown')">🌊 深海</button>
+            </div>
         </div>
 
-        <div class="panel" style="flex: 1; display: flex; flex-direction: column; padding-top: 10px;">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('audio')">🎵 音訊資料庫</button>
-                <button class="tab-btn" onclick="switchTab('notes')">📝 提醒事項</button>
+        <div class="panel" style="flex: 1;">
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('audio')">🎵 音訊檔</button>
+                    <button class="tab-btn" onclick="switchTab('notes')">📝 提醒我</button>
+                </div>
+                <label style="color: var(--accent); font-size: 0.8rem; font-weight: bold; cursor: pointer; border: 2px solid; padding: 4px 8px; border-radius: 8px;">
+                    <input type="file" id="file-input" accept="audio/*" multiple style="display:none;" onchange="handleFiles(this.files)">⊕ 選擇檔案
+                </label>
             </div>
             
             <div id="tab-audio" class="tab-content active">
-                <label class="custom-file-upload">
-                    <input type="file" id="file-input" accept="audio/*" multiple onchange="handleFiles(this.files)">
-                    ⊕ 選擇檔案
-                </label>
-                
-                <div id="attachment-list" class="custom-scroll" style="overflow-y: auto; flex: 1; margin-bottom: 15px;">
-                    </div>
-
+                <div id="attachment-list" class="custom-scroll" style="overflow-y: auto; flex: 1; margin-bottom: 10px;"></div>
                 <div class="audio-player-ui">
-                    <div class="audio-top-row">
-                        <div class="audio-title" id="audio-title">尚未載入音訊</div>
-                        <div class="audio-controls">
-                            <button class="icon-btn" onclick="togglePlayPause()" id="play-pause-btn" title="播放/暫停">▶</button>
-                            <button class="icon-btn stop" onclick="stopAudio()" title="停止">⏹</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div id="audio-title" style="color:var(--accent); font-size:0.85rem; font-weight:bold;">尚未載入</div>
+                        <div style="display:flex; gap:8px;">
+                            <button onclick="togglePlayPause()" id="play-pause-btn" style="width:30px; height:30px; border-radius:50%; background:#fff; color:var(--accent); border:2px solid;">▶</button>
+                            <button onclick="stopAudio()" style="width:30px; height:30px; border-radius:50%; background:#fff; color:var(--danger); border:2px solid;">⏹</button>
                         </div>
                     </div>
-                    <div class="audio-progress-container">
+                    <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; font-family:Poppins;">
                         <span id="audio-current">00:00</span>
-                        <input type="range" id="audio-slider" value="0" min="0" step="1">
+                        <input type="range" id="audio-slider" style="flex:1;" value="0" min="0" step="1">
                         <span id="audio-duration">00:00</span>
                     </div>
                     <audio id="audio-player" style="display: none;"></audio>
@@ -280,221 +251,222 @@
             </div>
 
             <div id="tab-notes" class="tab-content">
-                <textarea placeholder="在這裡輸入各科目的考試重點、注意事項或是激勵自己的話語...&#10;&#10;例如：&#10;1. 記得帶 2B 鉛筆與橡皮擦。&#10;2. 經濟學第 4 章公式必考！"></textarea>
+                <div class="font-control">
+                    <span>字體大小</span>
+                    <input type="range" id="font-resizer" min="12" max="48" value="16" oninput="changeFontSize(this.value)">
+                    <span id="font-val">16px</span>
+                </div>
+                <textarea id="notes-area" placeholder="寫下考前的小提醒吧..."></textarea>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 0. 分頁切換邏輯 ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(`tab-${tabId}`).classList.add('active');
+        // --- 初始化與儲存邏輯 (LocalStorage) ---
+        let exams = JSON.parse(localStorage.getItem('exams')) || [];
+        let periodTimes = JSON.parse(localStorage.getItem('periodTimes')) || {
+            1: { start: "08:40", end: "09:20" }, 2: { start: "09:30", end: "10:10" },
+            3: { start: "10:30", end: "11:10" }, 4: { start: "11:20", end: "12:00" },
+            5: { start: "13:30", end: "14:10" }, 6: { start: "14:20", end: "15:00" },
+            7: { start: "15:20", end: "16:00" }
+        };
+
+        window.onload = () => {
+            renderExams();
+            const savedNotes = localStorage.getItem('studyNotes');
+            if(savedNotes) document.getElementById('notes-area').value = savedNotes;
+            const savedFontSize = localStorage.getItem('notesFontSize') || 16;
+            changeFontSize(savedFontSize);
+            document.getElementById('font-resizer').value = savedFontSize;
+        };
+
+        document.getElementById('notes-area').oninput = (e) => {
+            localStorage.setItem('studyNotes', e.target.value);
+        };
+
+        function changeFontSize(val) {
+            document.getElementById('notes-area').style.fontSize = val + 'px';
+            document.getElementById('font-val').textContent = val + 'px';
+            localStorage.setItem('notesFontSize', val);
         }
 
-        // --- 1. 大型電子時鐘 ---
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('zh-TW', { hour12: false });
-            document.getElementById('clock').textContent = timeString;
+        // --- 考試列表功能 ---
+        function renderExams() {
+            const list = document.getElementById('exam-list');
+            list.innerHTML = '';
+            exams.forEach(exam => {
+                const item = document.createElement('div');
+                item.className = 'exam-item';
+                item.id = `exam-box-${exam.id}`;
+                item.innerHTML = `
+                    <div class="exam-header"><span class="exam-info">${exam.subject}</span>
+                        <button class="btn-delete" onclick="deleteExam(${exam.id})">✕</button>
+                    </div>
+                    <div class="exam-time" style="margin-bottom:6px;">${exam.start} - ${exam.end}</div>
+                    <div class="progress-bg"><div class="progress-bar" id="progress-${exam.id}" style="width: 100%;"></div></div>
+                `;
+                list.appendChild(item);
+            });
+            updateProgress();
+            localStorage.setItem('exams', JSON.stringify(exams));
         }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // --- 2. 考試排程與絲滑純綠色能量條 ---
-        let exams = [];
 
         function addExam() {
             const subject = document.getElementById('subject').value;
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
-
-            if (!subject || !startTime || !endTime) return alert('請填寫完整的科目與時間設定！');
-
+            if (!subject || !startTime || !endTime) return alert('請填寫完整喔！');
             exams.push({ id: Date.now(), subject, start: startTime, end: endTime });
             exams.sort((a, b) => a.start.localeCompare(b.start)); 
             renderExams();
-            
             document.getElementById('subject').value = '';
-            document.getElementById('start-time').value = '';
-            document.getElementById('end-time').value = '';
         }
 
         function deleteExam(id) {
-            exams = exams.filter(exam => exam.id !== id);
+            exams = exams.filter(e => e.id !== id);
             renderExams();
         }
 
-        function renderExams() {
-            const list = document.getElementById('exam-list');
-            list.innerHTML = '';
-
-            exams.forEach(exam => {
-                const item = document.createElement('div');
-                item.className = 'exam-item';
-                item.id = `exam-box-${exam.id}`;
-                // 在這裡加入了 SVG 垃圾桶圖示！
-                item.innerHTML = `
-                    <div class="exam-header">
-                        <span class="exam-info">${exam.subject}</span>
-                        <span class="exam-time">${exam.start} - ${exam.end}</span>
-                        <button class="btn-delete" onclick="deleteExam(${exam.id})" title="刪除此排程">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="progress-bg">
-                        <div class="progress-bar" id="progress-${exam.id}" style="width: 100%;"></div>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
+        // --- 時鐘與進度條 ---
+        function updateClock() {
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('zh-TW', { hour12: false });
             updateProgress();
         }
+        setInterval(updateClock, 1000);
 
         function updateProgress() {
             const now = new Date();
             const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-
             exams.forEach(exam => {
                 const progressBar = document.getElementById(`progress-${exam.id}`);
                 const examBox = document.getElementById(`exam-box-${exam.id}`);
-                if (!progressBar) return;
-
-                const [startH, startM] = exam.start.split(':').map(Number);
-                const [endH, endM] = exam.end.split(':').map(Number);
-                
-                const startSeconds = startH * 3600 + startM * 60;
-                const endSeconds = endH * 3600 + endM * 60;
-                const totalDuration = endSeconds - startSeconds;
-
-                if (currentSeconds >= endSeconds) {
+                if (!progressBar || !examBox) return;
+                const [sh, sm] = exam.start.split(':').map(Number);
+                const [eh, em] = exam.end.split(':').map(Number);
+                const ss = sh * 3600 + sm * 60, es = eh * 3600 + em * 60;
+                if (currentSeconds >= es) {
                     progressBar.style.width = '0%';
-                    progressBar.className = 'progress-bar'; 
-                    examBox.style.borderLeftColor = '#334155';
-                } else if (currentSeconds >= startSeconds) {
-                    const elapsed = currentSeconds - startSeconds;
-                    const remaining = totalDuration - elapsed;
-                    const percentage = (remaining / totalDuration) * 100;
-                    
-                    progressBar.style.width = `${percentage}%`;
-                    progressBar.className = 'progress-bar progress-active'; 
-                    examBox.style.borderLeftColor = 'var(--success)';
+                    examBox.classList.add('exam-finished');
+                } else if (currentSeconds >= ss) {
+                    progressBar.style.width = `${((es - currentSeconds) / (es - ss)) * 100}%`;
+                    progressBar.classList.add('progress-active');
+                    examBox.classList.remove('exam-finished');
                 } else {
                     progressBar.style.width = '100%';
-                    progressBar.className = 'progress-bar';
-                    progressBar.style.background = 'var(--text-muted)';
-                    examBox.style.borderLeftColor = 'var(--text-muted)';
+                    examBox.classList.remove('exam-finished');
                 }
             });
         }
-        setInterval(updateProgress, 1000); 
 
-        // --- 3. 累加型音檔資料庫與極簡控制台 ---
+        // --- 音訊播放器 (修復拖曳 Bug) ---
         const audioPlayer = document.getElementById('audio-player');
-        const audioTitle = document.getElementById('audio-title');
-        const playPauseBtn = document.getElementById('play-pause-btn');
         const audioSlider = document.getElementById('audio-slider');
-        const audioCurrent = document.getElementById('audio-current');
-        const audioDuration = document.getElementById('audio-duration');
+        let isDragging = false;
+
+        audioSlider.oninput = () => { isDragging = true; };
+        audioSlider.onchange = () => { 
+            audioPlayer.currentTime = audioSlider.value; 
+            isDragging = false; 
+        };
+
+        audioPlayer.ontimeupdate = () => {
+            if(!isDragging) audioSlider.value = audioPlayer.currentTime;
+            document.getElementById('audio-current').textContent = formatTime(audioPlayer.currentTime);
+        };
+
+        audioPlayer.onloadedmetadata = () => {
+            audioSlider.max = audioPlayer.duration;
+            document.getElementById('audio-duration').textContent = formatTime(audioPlayer.duration);
+        };
+
+        function formatTime(s) {
+            const m = Math.floor(s/60);
+            const sec = Math.floor(s%60);
+            return `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+        }
+
+        function togglePlayPause() { 
+            if(!audioPlayer.src) return; 
+            audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause(); 
+            document.getElementById('play-pause-btn').textContent = audioPlayer.paused ? '▶' : '⏸';
+        }
+
+        function stopAudio() { audioPlayer.pause(); audioPlayer.currentTime = 0; document.getElementById('play-pause-btn').textContent = '▶'; }
 
         function handleFiles(files) {
             const list = document.getElementById('attachment-list');
-            
             Array.from(files).forEach(file => {
-                const fileId = 'file-' + Date.now() + Math.floor(Math.random() * 1000);
-                const fileURL = URL.createObjectURL(file);
+                const url = URL.createObjectURL(file);
                 const item = document.createElement('div');
-                
-                item.className = 'file-item';
-                item.id = fileId;
-                item.innerHTML = `
-                    <span class="file-name" title="${file.name}">🎵 ${file.name}</span>
-                    <div class="file-actions">
-                        <button class="btn-load" onclick="loadAudio('${fileURL}', '${file.name}')">載入</button>
-                        <button class="btn-remove-file" onclick="removeAudioFile('${fileId}')" title="移除此檔案">✕</button>
-                    </div>
-                `;
+                item.style = "display:flex; justify-content:space-between; background:#fafcff; padding:8px; border-radius:10px; margin-bottom:6px; border:2px solid #e3f0ff; font-size:0.85rem;";
+                item.innerHTML = `<span>🎵 ${file.name}</span><button onclick="audioPlayer.src='${url}'; document.getElementById('audio-title').textContent='${file.name}'; audioPlayer.play();" style="color:var(--accent); font-weight:bold;">載入</button>`;
                 list.appendChild(item);
             });
+        }
+
+        // --- 學霸結界 (Procedural White Noise) ---
+        let audioCtx, noiseNode, filterNode;
+        function toggleNoise(type) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (noiseNode) {
+                noiseNode.stop();
+                noiseNode = null;
+                document.querySelectorAll('.noise-btn').forEach(b => b.classList.remove('active'));
+                if (currentNoiseType === type) return; 
+            }
             
-            document.getElementById('file-input').value = ""; 
+            const bufferSize = 2 * audioCtx.sampleRate, noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate), output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+
+            filterNode = audioCtx.createBiquadFilter();
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = (type === 'rain') ? 1000 : 400; // 雨聲高頻較多，深海低頻較多
+
+            noiseNode.connect(filterNode);
+            filterNode.connect(audioCtx.destination);
+            noiseNode.start();
+            currentNoiseType = type;
+            document.getElementById(type === 'rain' ? 'btn-rain' : 'btn-deep').classList.add('active');
+        }
+        let currentNoiseType = '';
+
+        // --- 設定與 Tab 切換 ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
         }
 
-        function removeAudioFile(fileId) {
-            const element = document.getElementById(fileId);
-            if (element) {
-                element.remove();
+        function openSettings() {
+            const container = document.getElementById('period-settings-container');
+            container.innerHTML = '';
+            for(let i = 1; i <= 7; i++) {
+                container.innerHTML += `<div class="period-row"><span>第 ${i} 節</span><input type="time" id="set-p${i}-start" value="${periodTimes[i].start}"> ~ <input type="time" id="set-p${i}-end" value="${periodTimes[i].end}"></div>`;
+            }
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+
+        function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        function saveSettings() {
+            for(let i = 1; i <= 7; i++) {
+                periodTimes[i].start = document.getElementById(`set-p${i}-start`).value;
+                periodTimes[i].end = document.getElementById(`set-p${i}-end`).value;
+            }
+            localStorage.setItem('periodTimes', JSON.stringify(periodTimes));
+            closeSettings();
+        }
+        function applyQuickSelect() {
+            const val = document.getElementById('quick-select').value;
+            if(val) {
+                document.getElementById('start-time').value = periodTimes[val].start;
+                document.getElementById('end-time').value = periodTimes[val].end;
             }
         }
-
-        function loadAudio(url, name) {
-            audioPlayer.src = url;
-            audioTitle.textContent = `${name}`;
-            audioPlayer.load();
-            audioPlayer.play();
-        }
-
-        function togglePlayPause() {
-            if (!audioPlayer.src) return alert("請先從上方資料庫載入音訊檔案！");
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-            } else {
-                audioPlayer.pause();
-            }
-        }
-
-        function stopAudio() {
-            audioPlayer.pause();
-            audioPlayer.currentTime = 0;
-            updateUIState();
-        }
-
-        audioPlayer.addEventListener('play', updateUIState);
-        audioPlayer.addEventListener('pause', updateUIState);
-
-        function updateUIState() {
-            if (audioPlayer.paused) {
-                playPauseBtn.innerHTML = '▶'; 
-                playPauseBtn.style.background = 'rgba(0, 240, 255, 0.1)';
-                playPauseBtn.style.color = 'var(--accent)';
-            } else {
-                playPauseBtn.innerHTML = '⏸'; 
-                playPauseBtn.style.background = 'var(--accent)';
-                playPauseBtn.style.color = '#000';
-            }
-        }
-
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return "00:00";
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = Math.floor(seconds % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            audioSlider.max = Math.floor(audioPlayer.duration);
-            audioDuration.textContent = formatTime(audioPlayer.duration);
-        });
-
-        audioPlayer.addEventListener('timeupdate', () => {
-            if (!audioSlider.dataset.dragging) {
-                audioSlider.value = Math.floor(audioPlayer.currentTime);
-            }
-            audioCurrent.textContent = formatTime(audioPlayer.currentTime);
-        });
-
-        audioSlider.addEventListener('mousedown', () => audioSlider.dataset.dragging = true);
-        audioSlider.addEventListener('mouseup', () => delete audioSlider.dataset.dragging);
-        audioSlider.addEventListener('input', () => {
-            audioCurrent.textContent = formatTime(audioSlider.value);
-            audioPlayer.currentTime = audioSlider.value;
-        });
-
     </script>
 </body>
 </html>

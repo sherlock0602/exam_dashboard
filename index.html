@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>期中考戰備小屋 V2 - 小豆芽升級版</title>
+    <title>🌱 小豆芽的學霸戰備小屋 2.0</title>
     <style>
         :root {
             --bg-color: #f0f8ff;
@@ -26,7 +26,7 @@
             color: var(--text-main); 
             display: flex; 
             height: 100vh; 
-            padding: 15px; 
+            padding: 15px; /* 回復原本的間距 */
             gap: 15px; 
             overflow: hidden;
             background-image: radial-gradient(circle, rgba(116, 185, 255, 0.15) 1px, transparent 1px);
@@ -51,14 +51,14 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px dashed #d1e8ff; padding-bottom: 8px; margin-bottom: 12px; 
         }
-        h2 { color: var(--accent); font-size: 1.3rem; letter-spacing: 1px; font-weight: 700; }
+        h2 { color: var(--accent); font-size: 1.4rem; letter-spacing: 1px; font-weight: 800; display: flex; align-items: center; gap: 8px;}
         
         .btn-gear {
             background: transparent; border: none; color: var(--text-muted); cursor: pointer;
             display: flex; align-items: center; justify-content: center; padding: 5px;
             border-radius: 50%; transition: 0.3s;
         }
-        .btn-gear svg { width: 20px; height: 20px; }
+        .btn-gear svg { width: 22px; height: 22px; }
         .btn-gear:hover { color: var(--accent); background: #eaf4ff; transform: rotate(45deg); }
 
         #clock { 
@@ -72,33 +72,31 @@
         }
         .noise-btn {
             background: #fff; border: 2px solid #e3f0ff; color: var(--text-muted);
-            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.3s;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
         .noise-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
         input[type="text"], input[type="time"], select { 
             padding: 8px 12px; border-radius: 10px; border: 2px solid #eee; outline: none; 
-            background: #fff; color: var(--text-main); font-size: 0.9rem; 
+            background: #fff; color: var(--text-main); font-size: 0.95rem; 
         }
         input[type="text"] { flex: 2; min-width: 120px; }
         select { flex: 1; cursor: pointer; color: var(--accent); font-weight: bold; }
-        input[type="time"] { 
-    width: 150px; /* 小豆芽施法：把這裡變寬！✨ */
-    font-family: 'Poppins', sans-serif; 
-}
+        /* 時間欄位保留加寬，避免上午下午被切斷 */
+        input[type="time"] { width: 145px; font-family: 'Poppins', sans-serif; text-align: center; }
         
-        input[type="text"]:focus, input[type="time"]:focus, select:focus { border-color: var(--accent); box-shadow: 0 4px 10px var(--accent-shadow); }
+        input[type="text"]:focus, input[type="time"]:focus, select:focus { border-color: var(--accent); }
         
         button { cursor: pointer; border: none; outline: none; transition: 0.3s; }
-        .btn-add { padding: 8px 15px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: bold; font-size: 0.9rem; }
+        .btn-add { padding: 8px 15px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: bold; font-size: 0.95rem; }
         .btn-add:hover { background: #5fa4e6; box-shadow: 0 4px 10px var(--accent-shadow); }
         
         .btn-delete { 
             background: transparent; color: var(--danger); border: 2px solid var(--danger); 
             border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.9rem;
         }
-        .btn-delete svg { width: 14px; height: 14px; }
         .btn-delete:hover { background: var(--danger); color: #fff; }
 
         #exam-list { overflow-y: auto; padding-right: 5px; flex: 1; }
@@ -106,21 +104,19 @@
         #exam-list::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { background: #d1e8ff; border-radius: 4px; }
 
         .exam-item { 
-            background: #fff; margin-bottom: 10px; padding: 10px; border-radius: 12px; 
+            background: #fff; margin-bottom: 12px; padding: 12px 15px; border-radius: 12px; 
             border: 2px solid var(--unfinished-border); 
             border-left-width: 6px; border-left-color: var(--unfinished-border);
-            transition: all 0.5s ease; position: relative;
+            transition: all 0.5s ease;
         }
 
-        .exam-finished {
-            border-color: var(--finished-border) !important; 
-            border-left-color: var(--finished-border) !important;
-            background-color: #fffafb; 
-        }
-
-        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .exam-info { font-size: 1.1rem; font-weight: bold; }
-        .exam-time { color: var(--accent); font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        .exam-finished { background-color: #fffafb !important; border-color: var(--finished-border) !important; border-left-color: var(--finished-border) !important; }
+        
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        
+        /* 🔥 小豆芽特製：項目條放大加粗，並排在同一行！ */
+        .exam-info { font-size: 1.4rem; font-weight: 900; }
+        .exam-time { color: var(--accent); font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: bold; }
         
         .progress-bg { width: 100%; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }
         .progress-bar { height: 100%; width: 100%; background: var(--text-muted); transition: width 1s linear, background-color 0.5s; }
@@ -132,24 +128,26 @@
         }
         .tabs { display: flex; gap: 5px; }
         .tab-btn {
-            background: #f4f9ff; color: var(--text-muted); padding: 6px 15px; border-radius: 10px 10px 0 0; 
-            font-size: 0.85rem; font-weight: bold; border: 2px solid transparent; border-bottom: none; transition: 0.3s;
+            background: #f4f9ff; color: var(--text-muted); padding: 8px 15px; border-radius: 10px 10px 0 0; 
+            font-size: 0.9rem; font-weight: bold; border: 2px solid transparent; border-bottom: none; transition: 0.3s;
         }
         .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 -2px 10px var(--accent-shadow); }
         .tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
         .tab-content.active { display: flex; }
 
-        textarea { flex: 1; width: 100%; resize: none; background: #fff; border: 2px solid #eee; border-radius: 12px; color: var(--text-main); padding: 12px; font-size: 16px; outline: none; }
+        textarea { flex: 1; width: 100%; resize: none; background: #fff; border: 2px solid #eee; border-radius: 12px; color: var(--text-main); padding: 12px; outline: none; }
         
         /* 字體調整控制列 */
         .font-control {
             display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
             padding: 5px 10px; background: #eaf4ff; border-radius: 10px;
         }
-        .font-control span { font-size: 0.8rem; font-weight: bold; color: var(--accent); }
+        .font-control span { font-size: 0.85rem; font-weight: bold; color: var(--accent); }
         .font-control input[type="range"] { flex: 1; height: 4px; }
 
         .audio-player-ui { background: #eaf4ff; border: 2px solid #e3f0ff; border-radius: 15px; padding: 10px; margin-top: auto; }
+        
+        /* ⚙️ 設定視窗隱藏魔法陣 */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); z-index: 1000;
@@ -163,7 +161,7 @@
         .period-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
         .period-row input { width: 145px; padding: 8px; font-family: 'Poppins', sans-serif; text-align: center; border: 2px solid #eee; border-radius: 8px; }
         .modal-actions { display: flex; justify-content: space-between; margin-top: 25px; }
-        .btn-modal { padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-modal { padding: 8px 18px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
         .btn-cancel { background: #eee; color: var(--text-muted); }
         .btn-save { background: var(--accent); color: #fff; }
     </style>
@@ -205,6 +203,7 @@
                 <option value="7">第 7 節</option>
             </select>
             <input type="time" id="start-time">
+            <span style="color: var(--accent); font-weight: bold;">~</span>
             <input type="time" id="end-time">
             <button class="btn-add" onclick="addExam()">✨ 新增</button>
         </div>
@@ -226,7 +225,7 @@
                     <button class="tab-btn active" onclick="switchTab('audio')">🎵 音訊檔</button>
                     <button class="tab-btn" onclick="switchTab('notes')">📝 提醒我</button>
                 </div>
-                <label style="color: var(--accent); font-size: 0.8rem; font-weight: bold; cursor: pointer; border: 2px solid; padding: 4px 8px; border-radius: 8px;">
+                <label style="color: var(--accent); font-size: 0.85rem; font-weight: bold; cursor: pointer; border: 2px solid; padding: 4px 10px; border-radius: 8px;">
                     <input type="file" id="file-input" accept="audio/*" multiple style="display:none;" onchange="handleFiles(this.files)">⊕ 選擇檔案
                 </label>
             </div>
@@ -237,8 +236,8 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div id="audio-title" style="color:var(--accent); font-size:0.85rem; font-weight:bold;">尚未載入</div>
                         <div style="display:flex; gap:8px;">
-                            <button onclick="togglePlayPause()" id="play-pause-btn" style="width:30px; height:30px; border-radius:50%; background:#fff; color:var(--accent); border:2px solid;">▶</button>
-                            <button onclick="stopAudio()" style="width:30px; height:30px; border-radius:50%; background:#fff; color:var(--danger); border:2px solid;">⏹</button>
+                            <button onclick="togglePlayPause()" id="play-pause-btn" style="width:30px; height:30px; border-radius:50%; background:#fff; color:var(--accent); border:2px solid; cursor:pointer;">▶</button>
+                            <button onclick="stopAudio()" style="width:30px; height:30px; border-radius:50%; background:#fff; color:var(--danger); border:2px solid; cursor:pointer;">⏹</button>
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; font-family:Poppins;">
@@ -253,7 +252,7 @@
             <div id="tab-notes" class="tab-content">
                 <div class="font-control">
                     <span>字體大小</span>
-                    <input type="range" id="font-resizer" min="12" max="48" value="16" oninput="changeFontSize(this.value)">
+                    <input type="range" id="font-resizer" min="14" max="48" value="16" oninput="changeFontSize(this.value)">
                     <span id="font-val">16px</span>
                 </div>
                 <textarea id="notes-area" placeholder="寫下考前的小提醒吧..."></textarea>
@@ -298,11 +297,15 @@
                 const item = document.createElement('div');
                 item.className = 'exam-item';
                 item.id = `exam-box-${exam.id}`;
+                // 🔥 將標題與時間放在同一行，並調整大小與粗體
                 item.innerHTML = `
-                    <div class="exam-header"><span class="exam-info">${exam.subject}</span>
+                    <div class="exam-header">
+                        <div style="display:flex; align-items:baseline; gap:12px;">
+                            <span class="exam-info">${exam.subject}</span>
+                            <span class="exam-time">${exam.start} - ${exam.end}</span>
+                        </div>
                         <button class="btn-delete" onclick="deleteExam(${exam.id})">✕</button>
                     </div>
-                    <div class="exam-time" style="margin-bottom:6px;">${exam.start} - ${exam.end}</div>
                     <div class="progress-bg"><div class="progress-bar" id="progress-${exam.id}" style="width: 100%;"></div></div>
                 `;
                 list.appendChild(item);
@@ -353,12 +356,13 @@
                     examBox.classList.remove('exam-finished');
                 } else {
                     progressBar.style.width = '100%';
+                    progressBar.classList.remove('progress-active');
                     examBox.classList.remove('exam-finished');
                 }
             });
         }
 
-        // --- 音訊播放器 (修復拖曳 Bug) ---
+        // --- 音訊播放器 ---
         const audioPlayer = document.getElementById('audio-player');
         const audioSlider = document.getElementById('audio-slider');
         let isDragging = false;
@@ -399,7 +403,7 @@
                 const url = URL.createObjectURL(file);
                 const item = document.createElement('div');
                 item.style = "display:flex; justify-content:space-between; background:#fafcff; padding:8px; border-radius:10px; margin-bottom:6px; border:2px solid #e3f0ff; font-size:0.85rem;";
-                item.innerHTML = `<span>🎵 ${file.name}</span><button onclick="audioPlayer.src='${url}'; document.getElementById('audio-title').textContent='${file.name}'; audioPlayer.play();" style="color:var(--accent); font-weight:bold;">載入</button>`;
+                item.innerHTML = `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;">🎵 ${file.name}</span><button onclick="audioPlayer.src='${url}'; document.getElementById('audio-title').textContent='${file.name}'; audioPlayer.play(); document.getElementById('play-pause-btn').textContent='⏸';" style="color:var(--accent); font-weight:bold; background:transparent; border:none; cursor:pointer;">載入</button>`;
                 list.appendChild(item);
             });
         }
@@ -424,7 +428,7 @@
 
             filterNode = audioCtx.createBiquadFilter();
             filterNode.type = 'lowpass';
-            filterNode.frequency.value = (type === 'rain') ? 1000 : 400; // 雨聲高頻較多，深海低頻較多
+            filterNode.frequency.value = (type === 'rain') ? 1000 : 400;
 
             noiseNode.connect(filterNode);
             filterNode.connect(audioCtx.destination);
@@ -446,12 +450,13 @@
             const container = document.getElementById('period-settings-container');
             container.innerHTML = '';
             for(let i = 1; i <= 7; i++) {
-                container.innerHTML += `<div class="period-row"><span>第 ${i} 節</span><input type="time" id="set-p${i}-start" value="${periodTimes[i].start}"> ~ <input type="time" id="set-p${i}-end" value="${periodTimes[i].end}"></div>`;
+                container.innerHTML += `<div class="period-row"><span>第 ${i} 節</span><div><input type="time" id="set-p${i}-start" value="${periodTimes[i].start}"> <span style="color:var(--accent);">~</span> <input type="time" id="set-p${i}-end" value="${periodTimes[i].end}"></div></div>`;
             }
             document.getElementById('settings-modal').style.display = 'flex';
         }
 
         function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+        
         function saveSettings() {
             for(let i = 1; i <= 7; i++) {
                 periodTimes[i].start = document.getElementById(`set-p${i}-start`).value;
@@ -460,6 +465,7 @@
             localStorage.setItem('periodTimes', JSON.stringify(periodTimes));
             closeSettings();
         }
+        
         function applyQuickSelect() {
             const val = document.getElementById('quick-select').value;
             if(val) {
@@ -467,6 +473,11 @@
                 document.getElementById('end-time').value = periodTimes[val].end;
             }
         }
+
+        // 點擊空白處關閉設定視窗
+        document.getElementById('settings-modal').addEventListener('click', function(e) {
+            if(e.target === this) closeSettings();
+        });
     </script>
 </body>
 </html>

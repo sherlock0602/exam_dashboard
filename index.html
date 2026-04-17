@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌱 小豆芽的學霸戰備小屋 2.0</title>
+    <title>🌱 小豆芽的學霸戰備小屋 2.0 (極簡隱形版)</title>
     <style>
         :root {
             --bg-color: #f0f8ff;
@@ -26,8 +26,8 @@
             color: var(--text-main); 
             display: flex; 
             height: 100vh; 
-            padding: 15px; /* 回復原本的間距 */
-            gap: 15px; 
+            padding: 15px; 
+            gap: 8px; 
             overflow: hidden;
             background-image: radial-gradient(circle, rgba(116, 185, 255, 0.15) 1px, transparent 1px);
             background-size: 25px 25px;
@@ -44,8 +44,39 @@
             flex-direction: column;
         }
 
-        .left-panel { flex: 2; gap: 15px; }
-        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .left-panel { width: 62%; display: flex; flex-direction: column; gap: 15px; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 250px; }
+
+        /* 🔥 小豆芽的「真・隱形」魔法伸縮棒 (水平) */
+        .resizer-x {
+            width: 10px; cursor: ew-resize; 
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10; margin: 0 -2px;
+        }
+        .resizer-x::before {
+            content: ''; width: 2px; height: 100%; 
+            background: transparent; /* 完全透明，與背景融為一體 */
+            border-radius: 2px; transition: 0.3s;
+        }
+        /* 滑鼠碰到時，只給一點點極度微弱的發光提示，或是完全不顯示也可以 */
+        .resizer-x:hover::before, .resizer-x.active::before { 
+            background: rgba(116, 185, 255, 0.2); width: 4px; box-shadow: 0 0 5px rgba(116, 185, 255, 0.2); 
+        }
+
+        /* 🔥 小豆芽的「真・隱形」魔法伸縮棒 (垂直) */
+        .resizer-y {
+            height: 10px; cursor: ns-resize; 
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10; margin: -2px 0;
+        }
+        .resizer-y::before {
+            content: ''; height: 2px; width: 100%; 
+            background: transparent; /* 完全透明 */
+            border-radius: 2px; transition: 0.3s;
+        }
+        .resizer-y:hover::before, .resizer-y.active::before { 
+            background: rgba(116, 185, 255, 0.2); height: 4px; box-shadow: 0 0 5px rgba(116, 185, 255, 0.2); 
+        }
 
         .header-row {
             display: flex; justify-content: space-between; align-items: center;
@@ -55,37 +86,26 @@
         
         .btn-gear {
             background: transparent; border: none; color: var(--text-muted); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; padding: 5px;
-            border-radius: 50%; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%; transition: 0.3s;
         }
         .btn-gear svg { width: 22px; height: 22px; }
         .btn-gear:hover { color: var(--accent); background: #eaf4ff; transform: rotate(45deg); }
 
+        /* ⏰ 巨無霸電子時鐘 (吃滿整個空間) */
         #clock { 
-            font-size: 3.5rem; font-weight: 900; text-align: center; color: var(--accent); 
-            font-family: 'Poppins', sans-serif; letter-spacing: 2px; margin: 5px 0; 
-            background: #eaf4ff; border-radius: 15px; padding: 5px;
+            font-size: 4.5rem; font-weight: 900; text-align: center; color: var(--accent); 
+            font-family: 'Poppins', sans-serif; letter-spacing: 4px; margin: 0; 
+            background: #eaf4ff; border-radius: 15px; padding: 10px;
+            display: flex; justify-content: center; align-items: center; flex: 1; width: 100%; height: 100%;
         }
-
-        .focus-noise-panel {
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;
-        }
-        .noise-btn {
-            background: #fff; border: 2px solid #e3f0ff; color: var(--text-muted);
-            padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
-        .noise-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
         input[type="text"], input[type="time"], select { 
-            padding: 8px 12px; border-radius: 10px; border: 2px solid #eee; outline: none; 
-            background: #fff; color: var(--text-main); font-size: 0.95rem; 
+            padding: 8px 12px; border-radius: 10px; border: 2px solid #eee; outline: none; background: #fff; color: var(--text-main); font-size: 0.95rem; 
         }
         input[type="text"] { flex: 2; min-width: 120px; }
         select { flex: 1; cursor: pointer; color: var(--accent); font-weight: bold; }
-        /* 時間欄位保留加寬，避免上午下午被切斷 */
         input[type="time"] { width: 145px; font-family: 'Poppins', sans-serif; text-align: center; }
-        
         input[type="text"]:focus, input[type="time"]:focus, select:focus { border-color: var(--accent); }
         
         button { cursor: pointer; border: none; outline: none; transition: 0.3s; }
@@ -93,9 +113,7 @@
         .btn-add:hover { background: #5fa4e6; box-shadow: 0 4px 10px var(--accent-shadow); }
         
         .btn-delete { 
-            background: transparent; color: var(--danger); border: 2px solid var(--danger); 
-            border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 0.9rem;
+            background: transparent; color: var(--danger); border: 2px solid var(--danger); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem;
         }
         .btn-delete:hover { background: var(--danger); color: #fff; }
 
@@ -105,16 +123,11 @@
 
         .exam-item { 
             background: #fff; margin-bottom: 12px; padding: 12px 15px; border-radius: 12px; 
-            border: 2px solid var(--unfinished-border); 
-            border-left-width: 6px; border-left-color: var(--unfinished-border);
-            transition: all 0.5s ease;
+            border: 2px solid var(--unfinished-border); border-left-width: 6px; border-left-color: var(--unfinished-border); transition: all 0.5s ease;
         }
-
         .exam-finished { background-color: #fffafb !important; border-color: var(--finished-border) !important; border-left-color: var(--finished-border) !important; }
-        
         .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         
-        /* 🔥 小豆芽特製：項目條放大加粗，並排在同一行！ */
         .exam-info { font-size: 1.4rem; font-weight: 900; }
         .exam-time { color: var(--accent); font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: bold; }
         
@@ -122,41 +135,27 @@
         .progress-bar { height: 100%; width: 100%; background: var(--text-muted); transition: width 1s linear, background-color 0.5s; }
         .progress-active { background: var(--success); box-shadow: 0 4px 10px var(--success-shadow); }
 
-        .tabs-container {
-            display: flex; justify-content: space-between; align-items: flex-end; 
-            margin-bottom: 10px; border-bottom: 2px dashed #d1e8ff; padding-bottom: 5px;
-        }
+        .tabs-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; border-bottom: 2px dashed #d1e8ff; padding-bottom: 5px; }
         .tabs { display: flex; gap: 5px; }
-        .tab-btn {
-            background: #f4f9ff; color: var(--text-muted); padding: 8px 15px; border-radius: 10px 10px 0 0; 
-            font-size: 0.9rem; font-weight: bold; border: 2px solid transparent; border-bottom: none; transition: 0.3s;
-        }
+        .tab-btn { background: #f4f9ff; color: var(--text-muted); padding: 8px 15px; border-radius: 10px 10px 0 0; font-size: 0.9rem; font-weight: bold; border: 2px solid transparent; border-bottom: none; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 -2px 10px var(--accent-shadow); }
         .tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
         .tab-content.active { display: flex; }
 
         textarea { flex: 1; width: 100%; resize: none; background: #fff; border: 2px solid #eee; border-radius: 12px; color: var(--text-main); padding: 12px; outline: none; }
         
-        /* 字體調整控制列 */
-        .font-control {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-            padding: 5px 10px; background: #eaf4ff; border-radius: 10px;
-        }
+        .font-control { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 5px 10px; background: #eaf4ff; border-radius: 10px; }
         .font-control span { font-size: 0.85rem; font-weight: bold; color: var(--accent); }
-        .font-control input[type="range"] { flex: 1; height: 4px; }
+        .font-control input[type="range"] { flex: 1; height: 4px; cursor: pointer; }
 
         .audio-player-ui { background: #eaf4ff; border: 2px solid #e3f0ff; border-radius: 15px; padding: 10px; margin-top: auto; }
         
-        /* ⚙️ 設定視窗隱藏魔法陣 */
+        /* 隱藏設定視窗 */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); z-index: 1000;
-            justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); z-index: 1000; justify-content: center; align-items: center;
         }
-        .modal-content {
-            background: #fff; width: 520px; max-width: 95%; border-radius: 20px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 3px solid #e3f0ff;
-        }
+        .modal-content { background: #fff; width: 520px; max-width: 95%; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 3px solid #e3f0ff; }
         .modal-content h3 { color: var(--accent); text-align: center; margin-bottom: 20px; }
         .period-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
         .period-row input { width: 145px; padding: 8px; font-family: 'Poppins', sans-serif; text-align: center; border: 2px solid #eee; border-radius: 8px; }
@@ -179,7 +178,7 @@
         </div>
     </div>
 
-    <div class="left-panel panel">
+    <div class="left-panel panel" id="left-pane">
         <div class="header-row">
             <h2>🌱 小豆芽的學霸戰備小屋 2.0</h2>
             <button class="btn-gear" onclick="openSettings()">
@@ -210,16 +209,17 @@
         <div id="exam-list"></div>
     </div>
 
+    <div class="resizer-x" id="resizer-x" title="左右拖曳調整大小"></div>
+
     <div class="right-panel">
-        <div class="panel">
+        
+        <div class="panel" id="top-pane" style="height: 130px; flex-shrink: 0; padding: 15px;">
             <div id="clock">00:00:00</div>
-            <div class="focus-noise-panel">
-                <button class="noise-btn" id="btn-rain" onclick="toggleNoise('rain')">🌧️ 下雨聲</button>
-                <button class="noise-btn" id="btn-deep" onclick="toggleNoise('brown')">🌊 深海</button>
-            </div>
         </div>
 
-        <div class="panel" style="flex: 1;">
+        <div class="resizer-y" id="resizer-y" title="上下拖曳調整大小"></div>
+
+        <div class="panel" id="bottom-pane" style="flex: 1;">
             <div class="tabs-container">
                 <div class="tabs">
                     <button class="tab-btn active" onclick="switchTab('audio')">🎵 音訊檔</button>
@@ -261,7 +261,61 @@
     </div>
 
     <script>
-        // --- 初始化與儲存邏輯 (LocalStorage) ---
+        // ==========================================
+        // 🪄 魔法伸縮棒系統 (Resizer Logic)
+        // ==========================================
+        const resizerX = document.getElementById('resizer-x');
+        const leftPane = document.getElementById('left-pane');
+        const resizerY = document.getElementById('resizer-y');
+        const topPane = document.getElementById('top-pane');
+
+        let isResizingX = false;
+        let isResizingY = false;
+
+        resizerX.addEventListener('mousedown', (e) => {
+            isResizingX = true;
+            resizerX.classList.add('active');
+            document.body.style.cursor = 'ew-resize';
+            e.preventDefault(); 
+        });
+
+        resizerY.addEventListener('mousedown', (e) => {
+            isResizingY = true;
+            resizerY.classList.add('active');
+            document.body.style.cursor = 'ns-resize';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isResizingX) {
+                const newWidth = e.clientX - leftPane.getBoundingClientRect().left;
+                if (newWidth > 300 && newWidth < window.innerWidth - 300) {
+                    leftPane.style.width = `${newWidth}px`;
+                    leftPane.style.flex = 'none'; 
+                }
+            }
+            if (isResizingY) {
+                const newHeight = e.clientY - topPane.getBoundingClientRect().top;
+                if (newHeight > 80 && newHeight < window.innerHeight - 250) {
+                    topPane.style.height = `${newHeight}px`;
+                    topPane.style.flex = 'none';
+                }
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizingX || isResizingY) {
+                isResizingX = false;
+                isResizingY = false;
+                resizerX.classList.remove('active');
+                resizerY.classList.remove('active');
+                document.body.style.cursor = 'default';
+            }
+        });
+
+        // ==========================================
+        // 📚 核心資料與初始化
+        // ==========================================
         let exams = JSON.parse(localStorage.getItem('exams')) || [];
         let periodTimes = JSON.parse(localStorage.getItem('periodTimes')) || {
             1: { start: "08:40", end: "09:20" }, 2: { start: "09:30", end: "10:10" },
@@ -297,7 +351,6 @@
                 const item = document.createElement('div');
                 item.className = 'exam-item';
                 item.id = `exam-box-${exam.id}`;
-                // 🔥 將標題與時間放在同一行，並調整大小與粗體
                 item.innerHTML = `
                     <div class="exam-header">
                         <div style="display:flex; align-items:baseline; gap:12px;">
@@ -365,16 +418,16 @@
         // --- 音訊播放器 ---
         const audioPlayer = document.getElementById('audio-player');
         const audioSlider = document.getElementById('audio-slider');
-        let isDragging = false;
+        let isDraggingAudio = false;
 
-        audioSlider.oninput = () => { isDragging = true; };
+        audioSlider.oninput = () => { isDraggingAudio = true; };
         audioSlider.onchange = () => { 
             audioPlayer.currentTime = audioSlider.value; 
-            isDragging = false; 
+            isDraggingAudio = false; 
         };
 
         audioPlayer.ontimeupdate = () => {
-            if(!isDragging) audioSlider.value = audioPlayer.currentTime;
+            if(!isDraggingAudio) audioSlider.value = audioPlayer.currentTime;
             document.getElementById('audio-current').textContent = formatTime(audioPlayer.currentTime);
         };
 
@@ -408,36 +461,6 @@
             });
         }
 
-        // --- 學霸結界 (Procedural White Noise) ---
-        let audioCtx, noiseNode, filterNode;
-        function toggleNoise(type) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (noiseNode) {
-                noiseNode.stop();
-                noiseNode = null;
-                document.querySelectorAll('.noise-btn').forEach(b => b.classList.remove('active'));
-                if (currentNoiseType === type) return; 
-            }
-            
-            const bufferSize = 2 * audioCtx.sampleRate, noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate), output = noiseBuffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-
-            noiseNode = audioCtx.createBufferSource();
-            noiseNode.buffer = noiseBuffer;
-            noiseNode.loop = true;
-
-            filterNode = audioCtx.createBiquadFilter();
-            filterNode.type = 'lowpass';
-            filterNode.frequency.value = (type === 'rain') ? 1000 : 400;
-
-            noiseNode.connect(filterNode);
-            filterNode.connect(audioCtx.destination);
-            noiseNode.start();
-            currentNoiseType = type;
-            document.getElementById(type === 'rain' ? 'btn-rain' : 'btn-deep').classList.add('active');
-        }
-        let currentNoiseType = '';
-
         // --- 設定與 Tab 切換 ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -447,8 +470,7 @@
         }
 
         function openSettings() {
-            const container = document.getElementById('period-settings-container');
-            container.innerHTML = '';
+            const container = document.getElementById('period-settings-container'); container.innerHTML = '';
             for(let i = 1; i <= 7; i++) {
                 container.innerHTML += `<div class="period-row"><span>第 ${i} 節</span><div><input type="time" id="set-p${i}-start" value="${periodTimes[i].start}"> <span style="color:var(--accent);">~</span> <input type="time" id="set-p${i}-end" value="${periodTimes[i].end}"></div></div>`;
             }
@@ -474,7 +496,6 @@
             }
         }
 
-        // 點擊空白處關閉設定視窗
         document.getElementById('settings-modal').addEventListener('click', function(e) {
             if(e.target === this) closeSettings();
         });

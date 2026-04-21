@@ -422,7 +422,7 @@
             // 1. 動作播完了！先讓圖片優雅地淡出隱藏
             imgEl.style.opacity = '0';
 
-            // 2. ⏳ 這裡就是妳要的「1 秒鐘間隔」 (1000毫秒)
+            // 2. ⏳ 這裡就是妳要的「0.5 秒鐘間隔」 (500毫秒)
             setTimeout(() => {
                 let randomIndex;
                 do {
@@ -435,7 +435,7 @@
 
                 // 3. 換好衣服了，重新淡入登場！✨
                 imgEl.style.opacity = '1'; 
-            }, 500); // 👈 500毫秒 = 1秒鐘的完美空檔
+            }, 500); // 👈 500毫秒 = 0.5秒鐘的完美空檔
         }
         // --- 音訊播放器 ---
         const audioPlayer = document.getElementById('audio-player');

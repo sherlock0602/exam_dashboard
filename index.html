@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌱 小豆芽日常 (極致優化版)</title>
+    <title>🌱 小豆芽日常 (城市氣象局擴建版)</title>
     <style>
         /* ==========================================
            🎨 1. 主題調色盤 (CSS Variables & Themes)
@@ -27,19 +27,12 @@
 
             background-color: #070913;
             background-image: 
-                /* 1. 發光月暈 */
                 radial-gradient(circle at 85% 15%, rgba(253, 246, 211, 0.85) 0%, rgba(253, 246, 211, 0.4) 4%, rgba(163, 136, 238, 0.1) 20%, transparent 40%),
-                /* 2. 最左側邊緣大星 1 */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.95)' d='M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z'/%3E%3C/svg%3E"),
-                /* 3. 最左側邊緣大星 2 */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.85)' d='M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z'/%3E%3C/svg%3E"),
-                /* 4. 大十字星芒 */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cpath fill='rgba(255,255,255,0.95)' d='M20 10 Q20 20 30 20 Q20 20 20 30 Q20 20 10 20 Q20 20 20 10 Z'/%3E%3Cpath fill='rgba(255,255,255,0.7)' d='M150 120 Q150 125 155 125 Q150 125 150 130 Q150 125 145 125 Q150 125 150 120 Z'/%3E%3Cpath fill='rgba(255,255,255,0.9)' d='M250 180 Q250 190 260 190 Q250 190 250 200 Q250 190 240 190 Q250 190 250 180 Z'/%3E%3C/svg%3E"),
-                /* 5. 中十字星芒 */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cpath fill='rgba(255,255,255,0.85)' d='M40 80 Q40 88 48 88 Q40 88 40 96 Q40 88 32 88 Q40 88 40 80 Z'/%3E%3Cpath fill='rgba(255,255,255,0.75)' d='M220 45 Q220 53 228 53 Q220 53 220 61 Q220 53 212 53 Q220 53 220 45 Z'/%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M120 230 Q120 234 124 234 Q120 234 120 238 Q120 234 116 234 Q120 234 120 230 Z'/%3E%3C/svg%3E"),
-                /* 6. 細小星光 */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='15' cy='15' r='1.5' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='60' cy='45' r='1' fill='rgba(255,255,255,0.5)'/%3E%3Ccircle cx='85' cy='85' r='1.2' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='30' cy='80' r='0.8' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E"),
-                /* 7. 夢幻星雲 */
                 radial-gradient(ellipse at 20% 80%, rgba(65, 41, 145, 0.25) 0%, transparent 55%),
                 radial-gradient(ellipse at 70% 90%, rgba(33, 58, 143, 0.2) 0%, transparent 55%);
             background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, no-repeat, no-repeat;
@@ -48,7 +41,7 @@
             background-attachment: fixed;
         }
 
-        /* 🌸 櫻花主題 (補齊漏掉的設定) */
+        /* 🌸 櫻花主題 */
         body[data-theme="sakura"] {
             --bg-color: #fff0f5; --panel-bg: rgba(255, 255, 255, 0.9); --text-main: #5a3e46; --text-muted: #d090a0;
             --accent: #ff8fa3; --accent-shadow: rgba(255, 143, 163, 0.3);
@@ -67,31 +60,68 @@
         /* ==========================================
            📦 2. 基礎排版與重置 (Base & Layout)
            ========================================== */
-        * { 
-            box-sizing: border-box; margin: 0; padding: 0; 
-            font-family: 'Quicksand', 'Rounded Mplus 1c', 'Yu Gothic', sans-serif; 
-            transition: background-color 0.4s, color 0.4s; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', 'Rounded Mplus 1c', 'Yu Gothic', sans-serif; transition: background-color 0.4s, color 0.4s; }
         
         body { 
-            background-color: var(--bg-color); color: var(--text-main); 
-            display: flex; height: 100vh; padding: 15px; gap: 8px; overflow: hidden;
-            background-image: radial-gradient(circle, var(--accent-shadow) 1px, transparent 1px); 
-            background-size: 25px 25px;
+            background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; padding: 15px; gap: 8px; overflow: hidden;
+            background-image: radial-gradient(circle, var(--accent-shadow) 1px, transparent 1px); background-size: 25px 25px;
         }
 
         .panel { 
-            background: var(--panel-bg); border-radius: 20px; padding: 15px; 
-            border: 2px solid var(--clock-bg); backdrop-filter: blur(10px); 
-            box-shadow: 0 4px 15px var(--accent-shadow); 
-            display: flex; flex-direction: column;
+            background: var(--panel-bg); border-radius: 20px; padding: 15px; border: 2px solid var(--clock-bg); backdrop-filter: blur(10px); 
+            box-shadow: 0 4px 15px var(--accent-shadow); display: flex; flex-direction: column; z-index: 10;
         }
 
         .left-panel { width: 62%; display: flex; flex-direction: column; gap: 15px; }
         .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 250px; }
 
         /* ==========================================
-           📏 3. 隱形魔法伸縮棒 (Resizers)
+           🌧️ 3. 城市氣象局特效圖層 (Weather Layer)
+           ========================================== */
+        #weather-layer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; /* 絕對不能擋住滑鼠點擊 */
+            z-index: 999; /* 蓋在最上層 */
+            opacity: 0;
+            background-color: rgba(0, 5, 20, 0.15); /* 下雨時的微暗陰天感 */
+            /* 下雨的雨絲圖層 */
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cline x1='60' y1='0' x2='50' y2='30' stroke='rgba(255,255,255,0.4)' stroke-width='0.6' stroke-linecap='round'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Cline x1='30' y1='0' x2='25' y2='15' stroke='rgba(255,255,255,0.2)' stroke-width='0.4' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-size: 150px 150px, 70px 70px;
+            transition: opacity 1s ease;
+        }
+        
+        #weather-layer.raining {
+            opacity: 1;
+            animation: rain-fall 0.6s linear infinite;
+        }
+        
+        @keyframes rain-fall {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: -50px 150px, -23px 70px; }
+        }
+
+        /* 💦 全螢幕隨機散落的水花與漣漪特效 (內嵌 SVG 動畫) */
+        #weather-layer::after {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-image: 
+                /* 水花層 1 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cstyle%3E .r %7B fill: none; stroke: rgba(255,255,255,0.6); stroke-width: 1.5; %7D .d %7B fill: rgba(255,255,255,0.6); %7D .g %7B animation: s linear infinite; transform-origin: 0 0; %7D @keyframes s %7B 0%25 %7B transform: scale(0); opacity: 1; %7D 100%25 %7B transform: scale(1); opacity: 0; %7D %7D %3C/style%3E%3Cg transform='translate(80,100)'%3E%3Cg class='g' style='animation-duration: 1.1s; animation-delay: 0s;'%3E%3Cellipse rx='18' ry='6' class='r'/%3E%3Ccircle cx='-10' cy='-10' r='2' class='d'/%3E%3Ccircle cx='10' cy='-6' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(300,200)'%3E%3Cg class='g' style='animation-duration: 1.3s; animation-delay: -0.4s;'%3E%3Cellipse rx='22' ry='7' class='r'/%3E%3Ccircle cx='-12' cy='-12' r='2.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(150,320)'%3E%3Cg class='g' style='animation-duration: 0.9s; animation-delay: -0.8s;'%3E%3Cellipse rx='14' ry='4' class='r'/%3E%3Ccircle cx='8' cy='-8' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(350,50)'%3E%3Cg class='g' style='animation-duration: 1.2s; animation-delay: -0.2s;'%3E%3Cellipse rx='16' ry='5' class='r'/%3E%3Ccircle cx='-8' cy='-8' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+                /* 水花層 2 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 250'%3E%3Cstyle%3E .r %7B fill: none; stroke: rgba(255,255,255,0.5); stroke-width: 1; %7D .d %7B fill: rgba(255,255,255,0.5); %7D .g %7B animation: s linear infinite; transform-origin: 0 0; %7D @keyframes s %7B 0%25 %7B transform: scale(0); opacity: 1; %7D 100%25 %7B transform: scale(1); opacity: 0; %7D %7D %3C/style%3E%3Cg transform='translate(40,60)'%3E%3Cg class='g' style='animation-duration: 0.8s; animation-delay: -0.1s;'%3E%3Cellipse rx='10' ry='3' class='r'/%3E%3Ccircle cx='6' cy='-5' r='1' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(180,120)'%3E%3Cg class='g' style='animation-duration: 1s; animation-delay: -0.5s;'%3E%3Cellipse rx='12' ry='4' class='r'/%3E%3Ccircle cx='-5' cy='-6' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(90,200)'%3E%3Cg class='g' style='animation-duration: 0.9s; animation-delay: -0.9s;'%3E%3Cellipse rx='15' ry='5' class='r'/%3E%3Ccircle cx='-8' cy='-6' r='1' class='d'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 400px 400px, 250px 250px;
+            background-position: 0 0, 50px 50px;
+        }
+        
+        #weather-layer.raining::after { opacity: 1; }
+
+        /* ==========================================
+           📏 4. 隱形魔法伸縮棒 (Resizers)
            ========================================== */
         .resizer-x { width: 10px; cursor: ew-resize; display: flex; justify-content: center; align-items: center; z-index: 10; margin: 0 -2px; }
         .resizer-y { height: 10px; cursor: ns-resize; display: flex; justify-content: center; align-items: center; z-index: 10; margin: -2px 0; }
@@ -102,21 +132,18 @@
         .resizer-y:hover::before, .resizer-y.active::before { background: var(--accent-shadow); height: 4px; box-shadow: 0 0 5px var(--accent-shadow); }
 
         /* ==========================================
-           🎯 4. UI 元件 (Components)
+           🎯 5. UI 元件 (Components)
            ========================================== */
-        
-        /* 標題與按鈕 */
         .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--clock-bg); padding-bottom: 8px; margin-bottom: 12px; flex-shrink: 0; }
         h2 { color: var(--accent); font-size: 1.4rem; letter-spacing: 1px; font-weight: 800; display: flex; align-items: center; gap: 8px;}
-        .header-actions { display: flex; gap: 8px; }
-        .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%; transition: 0.3s; font-size: 1.2rem; }
+        .header-actions { display: flex; gap: 8px; position: relative; z-index: 1000; }
+        .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%; transition: 0.3s; font-size: 1.2rem; width: 32px; height: 32px; }
         .btn-icon svg { width: 22px; height: 22px; }
         .btn-icon:hover { color: var(--accent); background: var(--clock-bg); transform: rotate(15deg); }
+        .btn-weather.active { background: var(--accent); color: #fff; box-shadow: 0 0 10px var(--accent-shadow); transform: scale(1.1); }
 
-        /* 時鐘 */
         #clock { font-weight: 900; text-align: center; color: var(--accent); font-family: 'Poppins', sans-serif; letter-spacing: 4px; margin: 0; background: var(--clock-bg); border-radius: 15px; display: flex; justify-content: center; align-items: center; flex: 1; width: 100%; height: 100%; transition: font-size 0.1s ease-out; }
 
-        /* 表單輸入列 */
         .input-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: nowrap; align-items: center; overflow-x: auto; padding-bottom: 4px; flex-shrink: 0; }
         .input-group::-webkit-scrollbar { height: 4px; }
         .input-group::-webkit-scrollbar-thumb { background: var(--clock-bg); border-radius: 2px; }
@@ -131,7 +158,6 @@
         .btn-delete { background: transparent; color: var(--danger); border: 2px solid var(--danger); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
         .btn-delete:hover { background: var(--danger); color: #fff; }
 
-        /* 考試清單與進度條 */
         #exam-list { overflow-y: auto; padding-right: 5px; flex: 1; }
         #exam-list::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar { width: 6px; }
         #exam-list::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { background: var(--clock-bg); border-radius: 4px; }
@@ -144,7 +170,6 @@
         .progress-bar { height: 100%; width: 100%; background: var(--text-muted); transition: width 1s linear, background-color 0.5s; }
         .progress-active { background: var(--success); box-shadow: 0 4px 10px var(--success-shadow); }
 
-        /* 分頁 Tabs & 內容 */
         .tabs-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; border-bottom: 2px dashed var(--clock-bg); padding-bottom: 5px; flex-shrink: 0;}
         .tabs { display: flex; gap: 8px; }
         .tab-btn { background: var(--tab-bg); color: var(--text-muted); padding: 8px 18px; border-radius: 12px 12px 0 0; font-size: 1.3rem; border: 2px solid transparent; border-bottom: none; transition: 0.3s; }
@@ -156,11 +181,9 @@
         .font-control span { font-size: 0.85rem; font-weight: bold; color: var(--accent); }
         .font-control input[type="range"] { flex: 1; height: 4px; cursor: pointer; }
 
-        /* 音訊播放器 & 豆芽扭蛋房間 */
         .audio-player-ui { background: var(--clock-bg); border: 2px solid var(--clock-bg); border-radius: 15px; padding: 10px; margin-top: auto; flex-shrink: 0; }
         .avatar-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--clock-bg); border-radius: 15px; border: 2px dashed var(--accent); padding: 20px; }
 
-        /* 設定視窗 (Modal) */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: var(--panel-bg); width: 520px; max-width: 95%; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid var(--clock-bg); }
         .modal-content h3 { color: var(--accent); text-align: center; margin-bottom: 20px; }
@@ -173,6 +196,10 @@
     </style>
 </head>
 <body>
+
+    <div id="weather-layer"></div>
+    
+    <audio id="rain-audio" loop src="rain.mp3"></audio>
 
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content">
@@ -189,6 +216,7 @@
         <div class="header-row">
             <h2>🌱 小豆芽日常 </h2>
             <div class="header-actions">
+                <button class="btn-icon btn-weather" id="btn-weather" onclick="app.toggleWeather()" title="城市氣象局：下雨模式">🌧️</button>
                 <button class="btn-icon" onclick="app.toggleTheme()" title="切換小屋佈景主題">🎨</button>
                 <button class="btn-icon" onclick="app.openSettings()" title="設定節次時間">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -277,9 +305,6 @@
 
     <script>
         const app = {
-            // ==========================================
-            // 📚 1. 核心資料與快取 (State & Cache)
-            // ==========================================
             data: {
                 exams: JSON.parse(localStorage.getItem('exams')) || [],
                 periodTimes: JSON.parse(localStorage.getItem('periodTimes')) || {
@@ -290,14 +315,12 @@
                 },
                 themes: ['default', 'dark', 'sakura', 'matcha'],
                 currentThemeIndex: 0,
-                isDraggingAudio: false
+                isDraggingAudio: false,
+                isRaining: false 
             },
             
-            dom: {}, // 預先抓好網頁元素，效能大躍進！
+            dom: {}, 
 
-            // ==========================================
-            // 🎯 2. 初始化 (Initialization)
-            // ==========================================
             init() {
                 this.cacheDOM();
                 this.loadSettings();
@@ -306,7 +329,6 @@
                 this.renderExams();
                 this.initAudioPlayer();
                 
-                // 啟動主迴圈 (時鐘與進度)
                 setInterval(() => this.tick(), 1000);
                 this.tick();
             },
@@ -325,34 +347,76 @@
                     audioDuration: document.getElementById('audio-duration'),
                     playPauseBtn: document.getElementById('play-pause-btn'),
                     settingsModal: document.getElementById('settings-modal'),
-                    periodContainer: document.getElementById('period-settings-container')
+                    periodContainer: document.getElementById('period-settings-container'),
+                    weatherLayer: document.getElementById('weather-layer'),
+                    rainAudio: document.getElementById('rain-audio'),
+                    btnWeather: document.getElementById('btn-weather')
                 };
                 
-                // 監聽筆記儲存
                 this.dom.notesArea.addEventListener('input', (e) => localStorage.setItem('studyNotes', e.target.value));
-                // 點擊空白處關閉設定視窗
                 this.dom.settingsModal.addEventListener('click', (e) => { if(e.target === this.dom.settingsModal) this.closeSettings(); });
             },
 
             loadSettings() {
-                // 載入主題
                 const savedTheme = localStorage.getItem('studyTheme');
                 if(savedTheme && this.data.themes.includes(savedTheme)) {
                     this.data.currentThemeIndex = this.data.themes.indexOf(savedTheme);
                     document.body.setAttribute('data-theme', savedTheme);
                 }
-                // 載入筆記
                 const savedNotes = localStorage.getItem('studyNotes');
                 if(savedNotes) this.dom.notesArea.value = savedNotes;
-                // 載入字體大小
                 const savedFontSize = localStorage.getItem('notesFontSize') || 16;
                 this.changeFontSize(savedFontSize);
                 this.dom.fontResizer.value = savedFontSize;
             },
 
             // ==========================================
-            // 🎨 3. UI 與主題 (Theme & UI)
+            // 🌧️ 城市氣象局邏輯 (無敵疊加影分身版！)
             // ==========================================
+            toggleWeather() {
+                this.data.isRaining = !this.data.isRaining;
+
+                if (this.data.isRaining) {
+                    // 開啟下雨特效
+                    this.dom.weatherLayer.classList.add('raining');
+                    this.dom.btnWeather.classList.add('active');
+                    
+                    // 1. 先播放原本的第一層雨聲
+                    this.dom.rainAudio.volume = 1;
+                    this.dom.rainAudio.play().catch(e => console.log('音效被阻擋:', e));
+
+                    // 2. 🥷 啟動影分身疊加音量！(第一次點擊時製造分身)
+                    if (!this.dom.rainClones) {
+                        this.dom.rainClones = [];
+                        // 💡 多做 4 個分身，加原本的總共 5 倍音量！(如果還覺得小，把 4 改成 7)
+                        for (let i = 0; i < 8; i++) {
+                            let clone = new Audio(this.dom.rainAudio.src);
+                            clone.loop = true;
+                            clone.volume = 1; 
+                            this.dom.rainClones.push(clone);
+                        }
+                    }
+
+                    // 讓所有分身一起播放！
+                    this.dom.rainClones.forEach(clone => {
+                        clone.play().catch(e => console.log('分身音效被阻擋:', e));
+                    });
+
+                } else {
+                    // 關閉下雨特效
+                    this.dom.weatherLayer.classList.remove('raining');
+                    this.dom.btnWeather.classList.remove('active');
+                    
+                    // 停止原本的聲音
+                    this.dom.rainAudio.pause();
+                    
+                    // 停止所有分身
+                    if (this.dom.rainClones) {
+                        this.dom.rainClones.forEach(clone => clone.pause());
+                    }
+                }
+            },
+
             toggleTheme() {
                 this.data.currentThemeIndex = (this.data.currentThemeIndex + 1) % this.data.themes.length;
                 const newTheme = this.data.themes[this.data.currentThemeIndex];
@@ -373,9 +437,6 @@
                 localStorage.setItem('notesFontSize', val);
             },
 
-            // ==========================================
-            // ⚙️ 4. 節次設定模組 (Settings)
-            // ==========================================
             openSettings() {
                 this.dom.periodContainer.innerHTML = '';
                 for(let i = 1; i <= 7; i++) {
@@ -407,9 +468,6 @@
                 }
             },
 
-            // ==========================================
-            // 📝 5. 考試管理模組 (Exams)
-            // ==========================================
             addExam() {
                 const subject = document.getElementById('subject').value;
                 const startTime = document.getElementById('start-time').value;
@@ -448,12 +506,9 @@
                     this.dom.examList.appendChild(item);
                 });
                 localStorage.setItem('exams', JSON.stringify(this.data.exams));
-                this.updateProgress(); // 渲染完立刻更新一次進度
+                this.updateProgress(); 
             },
 
-            // ==========================================
-            // ⏰ 6. 主迴圈：時間與進度 (Game Loop)
-            // ==========================================
             tick() {
                 const now = new Date();
                 this.dom.clock.textContent = now.toLocaleTimeString('zh-TW', { hour12: false });
@@ -491,11 +546,8 @@
                 this.updateAvatarState(isStudyingCurrently);
             },
 
-            // ==========================================
-            // 🌱 7. 驚喜扭蛋模組 (Avatar Gacha)
-            // ==========================================
             avatar: {
-                gifs: ['play.gif', 'play2.gif', 'play3.gif'], // 🌟 妳的動畫清單放在這！
+                gifs: ['play.gif', 'play2.gif', 'play3.gif'], 
                 lastState: null,
                 intervalId: null,
                 timeoutId: null,
@@ -508,7 +560,6 @@
                 
                 const img = this.dom.avatarImg;
                 
-                // 🚨 強制打斷任何正在倒數的切換
                 clearInterval(this.avatar.intervalId); 
                 clearTimeout(this.avatar.timeoutId);
                 
@@ -516,9 +567,8 @@
                     img.style.opacity = '1'; 
                     img.src = 'study.gif'; 
                 } else {
-                    this.changeToRandomPlayGif(img, true); // true 代表是「剛下課」，立刻切換
+                    this.changeToRandomPlayGif(img, true); 
                     
-                    // 每 6 秒換一次
                     this.avatar.intervalId = setInterval(() => {
                         this.changeToRandomPlayGif(img, false);
                     }, 6000); 
@@ -532,12 +582,10 @@
                 }
 
                 if (isImmediate) {
-                    // 立刻切換 (不需淡出等待)
                     this.avatar.currentIndex = Math.floor(Math.random() * this.avatar.gifs.length);
                     imgEl.src = this.avatar.gifs[this.avatar.currentIndex];
                     imgEl.style.opacity = '1';
                 } else {
-                    // 一般輪播：先淡出 0.2s，等待 0.5s 空檔，再換圖淡入
                     imgEl.style.opacity = '0';
                     this.avatar.timeoutId = setTimeout(() => {
                         let randomIndex;
@@ -551,9 +599,6 @@
                 }
             },
 
-            // ==========================================
-            // 🎵 8. 音訊播放模組 (Audio Player)
-            // ==========================================
             initAudioPlayer() {
                 const p = this.dom.audioPlayer;
                 const s = this.dom.audioSlider;
@@ -615,9 +660,6 @@
                 this.dom.playPauseBtn.textContent = '⏸';
             },
 
-            // ==========================================
-            // 🪄 9. 魔法伸縮棒與自適應 (Resizer & Observer)
-            // ==========================================
             bindResizers() {
                 const resizerX = document.getElementById('resizer-x');
                 const resizerY = document.getElementById('resizer-y');
@@ -652,7 +694,6 @@
             }
         };
 
-        // 🚀 網頁載入完成，啟動小豆芽系統！
         window.onload = () => app.init();
 
     </script>

@@ -6,29 +6,59 @@
     <title>🌱 小豆芽的學霸戰備小屋 3.0 (極致優化版)</title>
     <style>
         /* ==========================================
-           🎨 1. 主題調色盤 (CSS Variables)
+           🎨 1. 主題調色盤 (CSS Variables & Themes)
            ========================================== */
-        :root {
+        
+        /* 💡 預設主題 (淺藍) */
+        :root, body[data-theme="default"] {
             --bg-color: #f0f8ff; --panel-bg: #ffffff; --text-main: #34495e; --text-muted: #95a5a6;
             --accent: #74b9ff; --accent-shadow: rgba(116, 185, 255, 0.3);
             --success: #81c784; --success-shadow: rgba(129, 199, 132, 0.3);
             --danger: #ffb6b9; --unfinished-border: #1e3799; --finished-border: #ffb6c1;
             --clock-bg: #eaf4ff; --tab-bg: #f4f9ff;
         }
+
+        /* 🌌 暗黑星空主題 (無盡深淵版) */
         body[data-theme="dark"] {
-            --bg-color: #121212; --panel-bg: #1e1e1e; --text-main: #e0e0e0; --text-muted: #757575;
-            --accent: #bb86fc; --accent-shadow: rgba(187, 134, 252, 0.3);
-            --unfinished-border: #bb86fc; --finished-border: #333333;
-            --clock-bg: #2d2d2d; --tab-bg: #252525;
+            --bg-color: #0b0c10; --panel-bg: rgba(30, 30, 42, 0.75); --text-main: #e0e0e0; --text-muted: #8a8d9b;
+            --accent: #a388ee; --accent-shadow: rgba(163, 136, 238, 0.4);
+            --unfinished-border: #a388ee; --finished-border: #3b3d54;
+            --clock-bg: rgba(40, 42, 58, 0.6); --tab-bg: rgba(30, 32, 45, 0.8);
+
+            background-color: #070913;
+            background-image: 
+                /* 1. 發光月暈 */
+                radial-gradient(circle at 85% 15%, rgba(253, 246, 211, 0.85) 0%, rgba(253, 246, 211, 0.4) 4%, rgba(163, 136, 238, 0.1) 20%, transparent 40%),
+                /* 2. 最左側邊緣大星 1 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.95)' d='M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z'/%3E%3C/svg%3E"),
+                /* 3. 最左側邊緣大星 2 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.85)' d='M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z'/%3E%3C/svg%3E"),
+                /* 4. 大十字星芒 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cpath fill='rgba(255,255,255,0.95)' d='M20 10 Q20 20 30 20 Q20 20 20 30 Q20 20 10 20 Q20 20 20 10 Z'/%3E%3Cpath fill='rgba(255,255,255,0.7)' d='M150 120 Q150 125 155 125 Q150 125 150 130 Q150 125 145 125 Q150 125 150 120 Z'/%3E%3Cpath fill='rgba(255,255,255,0.9)' d='M250 180 Q250 190 260 190 Q250 190 250 200 Q250 190 240 190 Q250 190 250 180 Z'/%3E%3C/svg%3E"),
+                /* 5. 中十字星芒 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cpath fill='rgba(255,255,255,0.85)' d='M40 80 Q40 88 48 88 Q40 88 40 96 Q40 88 32 88 Q40 88 40 80 Z'/%3E%3Cpath fill='rgba(255,255,255,0.75)' d='M220 45 Q220 53 228 53 Q220 53 220 61 Q220 53 212 53 Q220 53 220 45 Z'/%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M120 230 Q120 234 124 234 Q120 234 120 238 Q120 234 116 234 Q120 234 120 230 Z'/%3E%3C/svg%3E"),
+                /* 6. 細小星光 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='15' cy='15' r='1.5' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='60' cy='45' r='1' fill='rgba(255,255,255,0.5)'/%3E%3Ccircle cx='85' cy='85' r='1.2' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='30' cy='80' r='0.8' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E"),
+                /* 7. 夢幻星雲 */
+                radial-gradient(ellipse at 20% 80%, rgba(65, 41, 145, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 90%, rgba(33, 58, 143, 0.2) 0%, transparent 55%);
+            background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, no-repeat, no-repeat;
+            background-size: 100% 100%, 28px 28px, 22px 22px, 251px 233px, 173px 167px, 73px 83px, 100% 100%, 100% 100%;     
+            background-position: 0 0, 1% 25%, 0.5% 70%, 15px 20px, 0 0, 0 0, 0 0, 0 0;
+            background-attachment: fixed;
         }
+
+        /* 🌸 櫻花主題 (補齊漏掉的設定) */
         body[data-theme="sakura"] {
-            --bg-color: #fff0f5; --panel-bg: #ffffff; --text-main: #5d4037; --text-muted: #a1887f;
-            --accent: #f48fb1; --accent-shadow: rgba(244, 143, 177, 0.3);
-            --unfinished-border: #f48fb1; --finished-border: #fce4ec;
-            --clock-bg: #fce4ec; --tab-bg: #fffafb;
+            --bg-color: #fff0f5; --panel-bg: rgba(255, 255, 255, 0.9); --text-main: #5a3e46; --text-muted: #d090a0;
+            --accent: #ff8fa3; --accent-shadow: rgba(255, 143, 163, 0.3);
+            --unfinished-border: #ff8fa3; --finished-border: #ffe4e8;
+            --clock-bg: #fff0f5; --tab-bg: #fff5f7;
         }
+
+        /* 🍵 抹茶主題 */
         body[data-theme="matcha"] {
-            --bg-color: #f1f8e9; --panel-bg: #ffffff; --text-main: #33691e; --text-muted: #8bc34a;
+            --bg-color: #f1f8e9; --panel-bg: rgba(255, 255, 255, 0.9); --text-main: #33691e; --text-muted: #8bc34a;
             --accent: #689f38; --accent-shadow: rgba(104, 159, 56, 0.3);
             --unfinished-border: #689f38; --finished-border: #dcedc8;
             --clock-bg: #f1f8e9; --tab-bg: #f9fbe7;
@@ -37,16 +67,24 @@
         /* ==========================================
            📦 2. 基礎排版與重置 (Base & Layout)
            ========================================== */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', 'Rounded Mplus 1c', 'Yu Gothic', sans-serif; transition: background-color 0.4s, color 0.4s; }
+        * { 
+            box-sizing: border-box; margin: 0; padding: 0; 
+            font-family: 'Quicksand', 'Rounded Mplus 1c', 'Yu Gothic', sans-serif; 
+            transition: background-color 0.4s, color 0.4s; 
+        }
         
         body { 
-            background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; padding: 15px; gap: 8px; overflow: hidden;
-            background-image: radial-gradient(circle, var(--accent-shadow) 1px, transparent 1px); background-size: 25px 25px;
+            background-color: var(--bg-color); color: var(--text-main); 
+            display: flex; height: 100vh; padding: 15px; gap: 8px; overflow: hidden;
+            background-image: radial-gradient(circle, var(--accent-shadow) 1px, transparent 1px); 
+            background-size: 25px 25px;
         }
 
         .panel { 
-            background: var(--panel-bg); border-radius: 20px; padding: 15px; border: 2px solid var(--clock-bg); 
-            backdrop-filter: blur(10px); box-shadow: 0 4px 15px var(--accent-shadow); display: flex; flex-direction: column;
+            background: var(--panel-bg); border-radius: 20px; padding: 15px; 
+            border: 2px solid var(--clock-bg); backdrop-filter: blur(10px); 
+            box-shadow: 0 4px 15px var(--accent-shadow); 
+            display: flex; flex-direction: column;
         }
 
         .left-panel { width: 62%; display: flex; flex-direction: column; gap: 15px; }
@@ -66,6 +104,7 @@
         /* ==========================================
            🎯 4. UI 元件 (Components)
            ========================================== */
+        
         /* 標題與按鈕 */
         .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--clock-bg); padding-bottom: 8px; margin-bottom: 12px; flex-shrink: 0; }
         h2 { color: var(--accent); font-size: 1.4rem; letter-spacing: 1px; font-weight: 800; display: flex; align-items: center; gap: 8px;}
@@ -117,10 +156,8 @@
         .font-control span { font-size: 0.85rem; font-weight: bold; color: var(--accent); }
         .font-control input[type="range"] { flex: 1; height: 4px; cursor: pointer; }
 
-        /* 音訊播放器 */
+        /* 音訊播放器 & 豆芽扭蛋房間 */
         .audio-player-ui { background: var(--clock-bg); border: 2px solid var(--clock-bg); border-radius: 15px; padding: 10px; margin-top: auto; flex-shrink: 0; }
-        
-        /* 豆芽扭蛋房間 */
         .avatar-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--clock-bg); border-radius: 15px; border: 2px dashed var(--accent); padding: 20px; }
 
         /* 設定視窗 (Modal) */
@@ -176,13 +213,13 @@
             <input type="time" id="end-time">
             <button class="btn-add" onclick="app.addExam()">✨ 新增</button>
         </div>
+        
         <div id="exam-list"></div>
     </div>
 
     <div class="resizer-x" id="resizer-x"></div>
 
     <div class="right-panel">
-        
         <div class="panel" id="top-pane" style="height: 150px; flex-shrink: 0; padding: 15px;">
             <div id="clock">00:00:00</div>
         </div>
@@ -240,7 +277,9 @@
 
     <script>
         const app = {
+            // ==========================================
             // 📚 1. 核心資料與快取 (State & Cache)
+            // ==========================================
             data: {
                 exams: JSON.parse(localStorage.getItem('exams')) || [],
                 periodTimes: JSON.parse(localStorage.getItem('periodTimes')) || {
@@ -254,10 +293,11 @@
                 isDraggingAudio: false
             },
             
-            // 預先抓好網頁元素，效能大躍進！
-            dom: {},
+            dom: {}, // 預先抓好網頁元素，效能大躍進！
 
+            // ==========================================
             // 🎯 2. 初始化 (Initialization)
+            // ==========================================
             init() {
                 this.cacheDOM();
                 this.loadSettings();
@@ -310,7 +350,9 @@
                 this.dom.fontResizer.value = savedFontSize;
             },
 
+            // ==========================================
             // 🎨 3. UI 與主題 (Theme & UI)
+            // ==========================================
             toggleTheme() {
                 this.data.currentThemeIndex = (this.data.currentThemeIndex + 1) % this.data.themes.length;
                 const newTheme = this.data.themes[this.data.currentThemeIndex];
@@ -331,7 +373,9 @@
                 localStorage.setItem('notesFontSize', val);
             },
 
+            // ==========================================
             // ⚙️ 4. 節次設定模組 (Settings)
+            // ==========================================
             openSettings() {
                 this.dom.periodContainer.innerHTML = '';
                 for(let i = 1; i <= 7; i++) {
@@ -363,7 +407,9 @@
                 }
             },
 
+            // ==========================================
             // 📝 5. 考試管理模組 (Exams)
+            // ==========================================
             addExam() {
                 const subject = document.getElementById('subject').value;
                 const startTime = document.getElementById('start-time').value;
@@ -405,7 +451,9 @@
                 this.updateProgress(); // 渲染完立刻更新一次進度
             },
 
+            // ==========================================
             // ⏰ 6. 主迴圈：時間與進度 (Game Loop)
+            // ==========================================
             tick() {
                 const now = new Date();
                 this.dom.clock.textContent = now.toLocaleTimeString('zh-TW', { hour12: false });
@@ -443,7 +491,9 @@
                 this.updateAvatarState(isStudyingCurrently);
             },
 
+            // ==========================================
             // 🌱 7. 驚喜扭蛋模組 (Avatar Gacha)
+            // ==========================================
             avatar: {
                 gifs: ['play.gif', 'play2.gif', 'play3.gif'], // 🌟 妳的動畫清單放在這！
                 lastState: null,
@@ -501,7 +551,9 @@
                 }
             },
 
+            // ==========================================
             // 🎵 8. 音訊播放模組 (Audio Player)
+            // ==========================================
             initAudioPlayer() {
                 const p = this.dom.audioPlayer;
                 const s = this.dom.audioSlider;
@@ -563,7 +615,9 @@
                 this.dom.playPauseBtn.textContent = '⏸';
             },
 
+            // ==========================================
             // 🪄 9. 魔法伸縮棒與自適應 (Resizer & Observer)
+            // ==========================================
             bindResizers() {
                 const resizerX = document.getElementById('resizer-x');
                 const resizerY = document.getElementById('resizer-y');

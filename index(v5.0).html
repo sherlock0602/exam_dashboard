@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 小豆芽的學霸戰備小屋 3.0 (城市氣象局擴建版)</title>
+    <style>
+        /* ==========================================
+           🎨 1. 主題調色盤 (CSS Variables & Themes)
+           ========================================== */
+        
+        /* 💡 預設主題 (淺藍) */
+        :root, body[data-theme="default"] {
+            --bg-color: #f0f8ff; --panel-bg: #ffffff; --text-main: #34495e; --text-muted: #95a5a6;
+            --accent: #74b9ff; --accent-shadow: rgba(116, 185, 255, 0.3);
+            --success: #81c784; --success-shadow: rgba(129, 199, 132, 0.3);
+            --danger: #ffb6b9; --unfinished-border: #1e3799; --finished-border: #ffb6c1;
+            --clock-bg: #eaf4ff; --tab-bg: #f4f9ff;
+        }
+
+        /* 🌌 暗黑星空主題 (無盡深淵版) */
+        body[data-theme="dark"] {
+            --bg-color: #0b0c10; --panel-bg: rgba(30, 30, 42, 0.75); --text-main: #e0e0e0; --text-muted: #8a8d9b;
+            --accent: #a388ee; --accent-shadow: rgba(163, 136, 238, 0.4);
+            --unfinished-border: #a388ee; --finished-border: #3b3d54;
+            --clock-bg: rgba(40, 42, 58, 0.6); --tab-bg: rgba(30, 32, 45, 0.8);
+
+            background-color: #070913;
+            background-image: 
+                radial-gradient(circle at 85% 15%, rgba(253, 246, 211, 0.85) 0%, rgba(253, 246, 211, 0.4) 4%, rgba(163, 136, 238, 0.1) 20%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.95)' d='M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.85)' d='M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cpath fill='rgba(255,255,255,0.95)' d='M20 10 Q20 20 30 20 Q20 20 20 30 Q20 20 10 20 Q20 20 20 10 Z'/%3E%3Cpath fill='rgba(255,255,255,0.7)' d='M150 120 Q150 125 155 125 Q150 125 150 130 Q150 125 145 125 Q150 125 150 120 Z'/%3E%3Cpath fill='rgba(255,255,255,0.9)' d='M250 180 Q250 190 260 190 Q250 190 250 200 Q250 190 240 190 Q250 190 250 180 Z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cpath fill='rgba(255,255,255,0.85)' d='M40 80 Q40 88 48 88 Q40 88 40 96 Q40 88 32 88 Q40 88 40 80 Z'/%3E%3Cpath fill='rgba(255,255,255,0.75)' d='M220 45 Q220 53 228 53 Q220 53 220 61 Q220 53 212 53 Q220 53 220 45 Z'/%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M120 230 Q120 234 124 234 Q120 234 120 238 Q120 234 116 234 Q120 234 120 230 Z'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='15' cy='15' r='1.5' fill='rgba(255,255,255,0.8)'/%3E%3Ccircle cx='60' cy='45' r='1' fill='rgba(255,255,255,0.5)'/%3E%3Ccircle cx='85' cy='85' r='1.2' fill='rgba(255,255,255,0.6)'/%3E%3Ccircle cx='30' cy='80' r='0.8' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E"),
+                radial-gradient(ellipse at 20% 80%, rgba(65, 41, 145, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 90%, rgba(33, 58, 143, 0.2) 0%, transparent 55%);
+            background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, no-repeat, no-repeat;
+            background-size: 100% 100%, 28px 28px, 22px 22px, 251px 233px, 173px 167px, 73px 83px, 100% 100%, 100% 100%;     
+            background-position: 0 0, 1% 25%, 0.5% 70%, 15px 20px, 0 0, 0 0, 0 0, 0 0;
+            background-attachment: fixed;
+        }
+
+        /* 🌸 櫻花主題 (退回原本穩定的淺粉底色) */
+        body[data-theme="sakura"] {
+            --bg-color: #fff0f5; --panel-bg: rgba(255, 255, 255, 0.9); --text-main: #5a3e46; --text-muted: #d090a0;
+            --accent: #ff8fa3; --accent-shadow: rgba(255, 143, 163, 0.3);
+            --unfinished-border: #ff8fa3; --finished-border: #ffe4e8;
+            --clock-bg: #fff0f5; --tab-bg: #fff5f7;
+        }
+
+        /* 🍵 抹茶主題 */
+        body[data-theme="matcha"] {
+            --bg-color: #f1f8e9; --panel-bg: rgba(255, 255, 255, 0.9); --text-main: #33691e; --text-muted: #8bc34a;
+            --accent: #689f38; --accent-shadow: rgba(104, 159, 56, 0.3);
+            --unfinished-border: #689f38; --finished-border: #dcedc8;
+            --clock-bg: #f1f8e9; --tab-bg: #f9fbe7;
+        }
+
+        /* ==========================================
+           📦 2. 基礎排版與重置 (Base & Layout)
+           ========================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', 'Rounded Mplus 1c', 'Yu Gothic', sans-serif; transition: background-color 0.4s, color 0.4s; }
+        
+        body { 
+            background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; padding: 15px; gap: 8px; overflow: hidden;
+            background-image: radial-gradient(circle, var(--accent-shadow) 1px, transparent 1px); background-size: 25px 25px;
+        }
+
+        .panel { 
+            background: var(--panel-bg); border-radius: 20px; padding: 15px; border: 2px solid var(--clock-bg); backdrop-filter: blur(10px); 
+            box-shadow: 0 4px 15px var(--accent-shadow); display: flex; flex-direction: column; z-index: 10;
+        }
+
+        .left-panel { width: 62%; display: flex; flex-direction: column; gap: 15px; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 250px; }
+
+        /* ==========================================
+           🌧️ 3. 城市氣象局特效圖層 (Weather Layer)
+           ========================================== */
+        #weather-layer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; /* 絕對不能擋住滑鼠點擊 */
+            z-index: 999; /* 蓋在最上層 */
+            opacity: 0;
+            background-color: rgba(0, 5, 20, 0.15); /* 下雨時的微暗陰天感 */
+            /* 下雨的雨絲圖層 */
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cline x1='60' y1='0' x2='50' y2='30' stroke='rgba(255,255,255,0.4)' stroke-width='0.6' stroke-linecap='round'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Cline x1='30' y1='0' x2='25' y2='15' stroke='rgba(255,255,255,0.2)' stroke-width='0.4' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-size: 150px 150px, 70px 70px;
+            transition: opacity 1s ease;
+        }
+        
+        #weather-layer.raining {
+            opacity: 1;
+            animation: rain-fall 0.6s linear infinite;
+        }
+        
+        @keyframes rain-fall {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: -50px 150px, -23px 70px; }
+        }
+
+        /* 💦 認真版：全螢幕隨機散落的水花與漣漪特效 (內嵌 SVG 動畫) */
+        #weather-layer::after {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-image: 
+                /* 水花層 1：大畫布散佈 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cstyle%3E .r %7B fill: none; stroke: rgba(255,255,255,0.6); stroke-width: 1.5; %7D .d %7B fill: rgba(255,255,255,0.6); %7D .g %7B animation: s linear infinite; transform-origin: 0 0; %7D @keyframes s %7B 0%25 %7B transform: scale(0); opacity: 1; %7D 100%25 %7B transform: scale(1); opacity: 0; %7D %7D %3C/style%3E%3Cg transform='translate(80,100)'%3E%3Cg class='g' style='animation-duration: 1.1s; animation-delay: 0s;'%3E%3Cellipse rx='18' ry='6' class='r'/%3E%3Ccircle cx='-10' cy='-10' r='2' class='d'/%3E%3Ccircle cx='10' cy='-6' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(300,200)'%3E%3Cg class='g' style='animation-duration: 1.3s; animation-delay: -0.4s;'%3E%3Cellipse rx='22' ry='7' class='r'/%3E%3Ccircle cx='-12' cy='-12' r='2.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(150,320)'%3E%3Cg class='g' style='animation-duration: 0.9s; animation-delay: -0.8s;'%3E%3Cellipse rx='14' ry='4' class='r'/%3E%3Ccircle cx='8' cy='-8' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(350,50)'%3E%3Cg class='g' style='animation-duration: 1.2s; animation-delay: -0.2s;'%3E%3Cellipse rx='16' ry='5' class='r'/%3E%3Ccircle cx='-8' cy='-8' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+                /* 水花層 2：小畫布錯位，填補空隙 */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 250'%3E%3Cstyle%3E .r %7B fill: none; stroke: rgba(255,255,255,0.5); stroke-width: 1; %7D .d %7B fill: rgba(255,255,255,0.5); %7D .g %7B animation: s linear infinite; transform-origin: 0 0; %7D @keyframes s %7B 0%25 %7B transform: scale(0); opacity: 1; %7D 100%25 %7B transform: scale(1); opacity: 0; %7D %7D %3C/style%3E%3Cg transform='translate(40,60)'%3E%3Cg class='g' style='animation-duration: 0.8s; animation-delay: -0.1s;'%3E%3Cellipse rx='10' ry='3' class='r'/%3E%3Ccircle cx='6' cy='-5' r='1' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(180,120)'%3E%3Cg class='g' style='animation-duration: 1s; animation-delay: -0.5s;'%3E%3Cellipse rx='12' ry='4' class='r'/%3E%3Ccircle cx='-5' cy='-6' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(90,200)'%3E%3Cg class='g' style='animation-duration: 0.9s; animation-delay: -0.9s;'%3E%3Cellipse rx='15' ry='5' class='r'/%3E%3Ccircle cx='-8' cy='-6' r='1' class='d'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 400px 400px, 250px 250px;
+            background-position: 0 0, 50px 50px;
+        }
+        
+        #weather-layer.raining::after {
+            opacity: 1;
+        }
+
+        /* ==========================================
+           📏 4. 隱形魔法伸縮棒 (Resizers)
+           ========================================== */
+        .resizer-x { width: 10px; cursor: ew-resize; display: flex; justify-content: center; align-items: center; z-index: 10; margin: 0 -2px; }
+        .resizer-y { height: 10px; cursor: ns-resize; display: flex; justify-content: center; align-items: center; z-index: 10; margin: -2px 0; }
+        .resizer-x::before, .resizer-y::before { content: ''; background: transparent; border-radius: 2px; transition: 0.3s; }
+        .resizer-x::before { width: 2px; height: 100%; }
+        .resizer-y::before { height: 2px; width: 100%; }
+        .resizer-x:hover::before, .resizer-x.active::before { background: var(--accent-shadow); width: 4px; box-shadow: 0 0 5px var(--accent-shadow); }
+        .resizer-y:hover::before, .resizer-y.active::before { background: var(--accent-shadow); height: 4px; box-shadow: 0 0 5px var(--accent-shadow); }
+
+        /* ==========================================
+           🎯 5. UI 元件 (Components)
+           ========================================== */
+        .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed var(--clock-bg); padding-bottom: 8px; margin-bottom: 12px; flex-shrink: 0; }
+        h2 { color: var(--accent); font-size: 1.4rem; letter-spacing: 1px; font-weight: 800; display: flex; align-items: center; gap: 8px;}
+        .header-actions { display: flex; gap: 8px; position: relative; z-index: 1000; }
+        .btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; border-radius: 50%; transition: 0.3s; font-size: 1.2rem; width: 32px; height: 32px; }
+        .btn-icon svg { width: 22px; height: 22px; }
+        .btn-icon:hover { color: var(--accent); background: var(--clock-bg); transform: rotate(15deg); }
+        .btn-weather.active { background: var(--accent); color: #fff; box-shadow: 0 0 10px var(--accent-shadow); transform: scale(1.1); }
+
+        #clock { font-weight: 900; text-align: center; color: var(--accent); font-family: 'Poppins', sans-serif; letter-spacing: 4px; margin: 0; background: var(--clock-bg); border-radius: 15px; display: flex; justify-content: center; align-items: center; flex: 1; width: 100%; height: 100%; transition: font-size 0.1s ease-out; }
+
+        .input-group { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: nowrap; align-items: center; overflow-x: auto; padding-bottom: 4px; flex-shrink: 0; }
+        .input-group::-webkit-scrollbar { height: 4px; }
+        .input-group::-webkit-scrollbar-thumb { background: var(--clock-bg); border-radius: 2px; }
+        input[type="text"], input[type="time"], select { padding: 8px 12px; border-radius: 10px; border: 2px solid var(--clock-bg); outline: none; background: var(--panel-bg); color: var(--text-main); font-size: 0.95rem; }
+        input[type="text"] { flex: 1; min-width: 100px; }
+        select { flex: 1; cursor: pointer; color: var(--accent); font-weight: bold; min-width: 100px;}
+        input[type="time"] { width: 135px; font-family: 'Poppins', sans-serif; text-align: center; flex-shrink: 0; cursor: pointer; }
+        input[type="text"]:focus, input[type="time"]:focus, select:focus { border-color: var(--accent); }
+        button { cursor: pointer; border: none; outline: none; transition: 0.3s; }
+        .btn-add { padding: 8px 15px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: bold; font-size: 0.95rem; flex-shrink: 0; white-space: nowrap; }
+        .btn-add:hover { filter: brightness(1.1); box-shadow: 0 4px 10px var(--accent-shadow); }
+        .btn-delete { background: transparent; color: var(--danger); border: 2px solid var(--danger); border-radius: 8px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
+        .btn-delete:hover { background: var(--danger); color: #fff; }
+
+        #exam-list { overflow-y: auto; padding-right: 5px; flex: 1; }
+        #exam-list::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar { width: 6px; }
+        #exam-list::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { background: var(--clock-bg); border-radius: 4px; }
+        .exam-item { background: var(--panel-bg); margin-bottom: 12px; padding: 12px 15px; border-radius: 12px; border: 2px solid var(--unfinished-border); border-left-width: 6px; border-left-color: var(--unfinished-border); transition: all 0.5s ease; }
+        .exam-finished { background-color: var(--tab-bg) !important; border-color: var(--finished-border) !important; border-left-color: var(--finished-border) !important; }
+        .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .exam-info { font-size: 1.4rem; font-weight: 900; }
+        .exam-time { color: var(--accent); font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: bold; }
+        .progress-bg { width: 100%; height: 6px; background: var(--clock-bg); border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 100%; background: var(--text-muted); transition: width 1s linear, background-color 0.5s; }
+        .progress-active { background: var(--success); box-shadow: 0 4px 10px var(--success-shadow); }
+
+        .tabs-container { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; border-bottom: 2px dashed var(--clock-bg); padding-bottom: 5px; flex-shrink: 0;}
+        .tabs { display: flex; gap: 8px; }
+        .tab-btn { background: var(--tab-bg); color: var(--text-muted); padding: 8px 18px; border-radius: 12px 12px 0 0; font-size: 1.3rem; border: 2px solid transparent; border-bottom: none; transition: 0.3s; }
+        .tab-btn.active { background: var(--accent); color: #fff; box-shadow: 0 -2px 10px var(--accent-shadow); transform: translateY(-2px); }
+        .tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+        .tab-content.active { display: flex; }
+        textarea { flex: 1; width: 100%; resize: none; background: var(--panel-bg); border: 2px solid var(--clock-bg); border-radius: 12px; color: var(--text-main); padding: 12px; outline: none; }
+        .font-control { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 5px 10px; background: var(--clock-bg); border-radius: 10px; flex-shrink: 0;}
+        .font-control span { font-size: 0.85rem; font-weight: bold; color: var(--accent); }
+        .font-control input[type="range"] { flex: 1; height: 4px; cursor: pointer; }
+
+        .audio-player-ui { background: var(--clock-bg); border: 2px solid var(--clock-bg); border-radius: 15px; padding: 10px; margin-top: auto; flex-shrink: 0; }
+        .avatar-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--clock-bg); border-radius: 15px; border: 2px dashed var(--accent); padding: 20px; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--panel-bg); width: 520px; max-width: 95%; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid var(--clock-bg); }
+        .modal-content h3 { color: var(--accent); text-align: center; margin-bottom: 20px; }
+        .period-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; }
+        .period-row input { width: 135px; padding: 8px; font-family: 'Poppins', sans-serif; text-align: center; border: 2px solid var(--clock-bg); border-radius: 8px; background: var(--panel-bg); color: var(--text-main); cursor: pointer;}
+        .modal-actions { display: flex; justify-content: space-between; margin-top: 25px; }
+        .btn-modal { padding: 8px 18px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; }
+        .btn-cancel { background: var(--clock-bg); color: var(--text-muted); }
+        .btn-save { background: var(--accent); color: #fff; }
+    </style>
+</head>
+<body>
+
+    <div id="weather-layer"></div>
+    
+    <audio id="rain-audio" loop src="https://actions.google.com/sounds/v1/weather/heavy_rain.ogg"></audio>
+
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>⚙️ 節次時間設定</h3>
+            <div id="period-settings-container"></div>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="app.closeSettings()">取消</button>
+                <button class="btn-modal btn-save" onclick="app.saveSettings()">儲存設定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="left-panel panel" id="left-pane">
+        <div class="header-row">
+            <h2>🌱 小豆芽的學霸戰備小屋 3.0</h2>
+            <div class="header-actions">
+                <button class="btn-icon btn-weather" id="btn-weather" onclick="app.toggleWeather()" title="城市氣象局：下雨模式">🌧️</button>
+                <button class="btn-icon" onclick="app.toggleTheme()" title="切換小屋佈景主題">🎨</button>
+                <button class="btn-icon" onclick="app.openSettings()" title="設定節次時間">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="subject" placeholder="科目">
+            <select id="quick-select" onchange="app.applyQuickSelect()">
+                <option value="">快速選取</option>
+                <option value="1">第 1 節</option>
+                <option value="2">第 2 節</option>
+                <option value="3">第 3 節</option>
+                <option value="4">第 4 節</option>
+                <option value="5">第 5 節</option>
+                <option value="6">第 6 節</option>
+                <option value="7">第 7 節</option>
+            </select>
+            <input type="time" id="start-time">
+            <span style="color: var(--accent); font-weight: bold;">~</span>
+            <input type="time" id="end-time">
+            <button class="btn-add" onclick="app.addExam()">✨ 新增</button>
+        </div>
+        
+        <div id="exam-list"></div>
+    </div>
+
+    <div class="resizer-x" id="resizer-x"></div>
+
+    <div class="right-panel">
+        <div class="panel" id="top-pane" style="height: 150px; flex-shrink: 0; padding: 15px;">
+            <div id="clock">00:00:00</div>
+        </div>
+
+        <div class="resizer-y" id="resizer-y"></div>
+
+        <div class="panel" id="bottom-pane" style="flex: 1;">
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="app.switchTab('audio')" title="音訊檔">🎵</button>
+                    <button class="tab-btn" onclick="app.switchTab('notes')" title="提醒我">📝</button>
+                    <button class="tab-btn" onclick="app.switchTab('avatar')" title="小豆芽動態房間">🌱</button>
+                </div>
+                <label style="color: var(--accent); font-size: 0.85rem; font-weight: bold; cursor: pointer; border: 2px solid; padding: 4px 10px; border-radius: 8px; flex-shrink: 0;">
+                    <input type="file" id="file-input" accept="audio/*" multiple style="display:none;" onchange="app.handleFiles(this.files)">⊕ 選擇檔案
+                </label>
+            </div>
+            
+            <div id="tab-audio" class="tab-content active">
+                <div id="attachment-list" class="custom-scroll" style="overflow-y: auto; flex: 1; margin-bottom: 10px;"></div>
+                <div class="audio-player-ui">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div id="audio-title" style="color:var(--accent); font-size:0.85rem; font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:60%;">尚未載入</div>
+                        <div style="display:flex; gap:8px;">
+                            <button onclick="app.togglePlayPause()" id="play-pause-btn" style="width:30px; height:30px; border-radius:50%; background:var(--panel-bg); color:var(--accent); border:2px solid; cursor:pointer;">▶</button>
+                            <button onclick="app.stopAudio()" style="width:30px; height:30px; border-radius:50%; background:var(--panel-bg); color:var(--danger); border:2px solid; cursor:pointer;">⏹</button>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; font-family:Poppins;">
+                        <span id="audio-current">00:00</span>
+                        <input type="range" id="audio-slider" style="flex:1;" value="0" min="0" step="1">
+                        <span id="audio-duration">00:00</span>
+                    </div>
+                    <audio id="audio-player" style="display: none;"></audio>
+                </div>
+            </div>
+
+            <div id="tab-notes" class="tab-content">
+                <div class="font-control">
+                    <span>字體大小</span>
+                    <input type="range" id="font-resizer" min="14" max="48" value="16" oninput="app.changeFontSize(this.value)">
+                    <span id="font-val">16px</span>
+                </div>
+                <textarea id="notes-area" placeholder="寫下考前的小提醒吧..."></textarea>
+            </div>
+
+            <div id="tab-avatar" class="tab-content">
+                <div class="avatar-box">
+                    <img id="avatar-image" src="play.gif" style="width: 250px; height: 250px; object-fit: contain; transition: opacity 0.2s ease-in-out;">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            data: {
+                exams: JSON.parse(localStorage.getItem('exams')) || [],
+                periodTimes: JSON.parse(localStorage.getItem('periodTimes')) || {
+                    1: { start: "08:40", end: "09:20" }, 2: { start: "09:30", end: "10:10" },
+                    3: { start: "10:30", end: "11:10" }, 4: { start: "11:20", end: "12:00" },
+                    5: { start: "13:30", end: "14:10" }, 6: { start: "14:20", end: "15:00" },
+                    7: { start: "15:20", end: "16:00" }
+                },
+                themes: ['default', 'dark', 'sakura', 'matcha'],
+                currentThemeIndex: 0,
+                isDraggingAudio: false,
+                isRaining: false // 🌧️ 新增下雨狀態追蹤
+            },
+            
+            dom: {}, 
+
+            init() {
+                this.cacheDOM();
+                this.loadSettings();
+                this.bindResizers();
+                this.initClockObserver();
+                this.renderExams();
+                this.initAudioPlayer();
+                
+                setInterval(() => this.tick(), 1000);
+                this.tick();
+            },
+
+            cacheDOM() {
+                this.dom = {
+                    clock: document.getElementById('clock'),
+                    examList: document.getElementById('exam-list'),
+                    notesArea: document.getElementById('notes-area'),
+                    fontVal: document.getElementById('font-val'),
+                    fontResizer: document.getElementById('font-resizer'),
+                    avatarImg: document.getElementById('avatar-image'),
+                    audioPlayer: document.getElementById('audio-player'),
+                    audioSlider: document.getElementById('audio-slider'),
+                    audioCurrent: document.getElementById('audio-current'),
+                    audioDuration: document.getElementById('audio-duration'),
+                    playPauseBtn: document.getElementById('play-pause-btn'),
+                    settingsModal: document.getElementById('settings-modal'),
+                    periodContainer: document.getElementById('period-settings-container'),
+                    // 🌧️ 新增氣象局的 DOM 元素
+                    weatherLayer: document.getElementById('weather-layer'),
+                    rainAudio: document.getElementById('rain-audio'),
+                    btnWeather: document.getElementById('btn-weather')
+                };
+                
+                this.dom.notesArea.addEventListener('input', (e) => localStorage.setItem('studyNotes', e.target.value));
+                this.dom.settingsModal.addEventListener('click', (e) => { if(e.target === this.dom.settingsModal) this.closeSettings(); });
+            },
+
+            loadSettings() {
+                const savedTheme = localStorage.getItem('studyTheme');
+                if(savedTheme && this.data.themes.includes(savedTheme)) {
+                    this.data.currentThemeIndex = this.data.themes.indexOf(savedTheme);
+                    document.body.setAttribute('data-theme', savedTheme);
+                }
+                const savedNotes = localStorage.getItem('studyNotes');
+                if(savedNotes) this.dom.notesArea.value = savedNotes;
+                const savedFontSize = localStorage.getItem('notesFontSize') || 16;
+                this.changeFontSize(savedFontSize);
+                this.dom.fontResizer.value = savedFontSize;
+            },
+
+            // ==========================================
+            // 🌧️ 城市氣象局邏輯 (Weather Logic)
+            // ==========================================
+            toggleWeather() {
+                this.data.isRaining = !this.data.isRaining;
+                if (this.data.isRaining) {
+                    // 開啟下雨
+                    this.dom.weatherLayer.classList.add('raining');
+                    this.dom.btnWeather.classList.add('active');
+                    this.dom.rainAudio.volume = 1; // 設定舒適的白噪音音量
+                    this.dom.rainAudio.play().catch(e => console.log('瀏覽器阻擋了自動播放音效:', e));
+                } else {
+                    // 關閉下雨
+                    this.dom.weatherLayer.classList.remove('raining');
+                    this.dom.btnWeather.classList.remove('active');
+                    this.dom.rainAudio.pause();
+                }
+            },
+
+            toggleTheme() {
+                this.data.currentThemeIndex = (this.data.currentThemeIndex + 1) % this.data.themes.length;
+                const newTheme = this.data.themes[this.data.currentThemeIndex];
+                document.body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('studyTheme', newTheme);
+            },
+
+            switchTab(tabId) {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                event.target.classList.add('active');
+                document.getElementById(`tab-${tabId}`).classList.add('active');
+            },
+
+            changeFontSize(val) {
+                this.dom.notesArea.style.fontSize = val + 'px';
+                this.dom.fontVal.textContent = val + 'px';
+                localStorage.setItem('notesFontSize', val);
+            },
+
+            openSettings() {
+                this.dom.periodContainer.innerHTML = '';
+                for(let i = 1; i <= 7; i++) {
+                    this.dom.periodContainer.innerHTML += `
+                        <div class="period-row"><span>第 ${i} 節</span>
+                        <div><input type="time" id="set-p${i}-start" value="${this.data.periodTimes[i].start}"> 
+                        <span style="color:var(--accent);">~</span> 
+                        <input type="time" id="set-p${i}-end" value="${this.data.periodTimes[i].end}"></div></div>`;
+                }
+                this.dom.settingsModal.style.display = 'flex';
+            },
+
+            closeSettings() { this.dom.settingsModal.style.display = 'none'; },
+
+            saveSettings() {
+                for(let i = 1; i <= 7; i++) {
+                    this.data.periodTimes[i].start = document.getElementById(`set-p${i}-start`).value;
+                    this.data.periodTimes[i].end = document.getElementById(`set-p${i}-end`).value;
+                }
+                localStorage.setItem('periodTimes', JSON.stringify(this.data.periodTimes)); 
+                this.closeSettings();
+            },
+
+            applyQuickSelect() {
+                const val = document.getElementById('quick-select').value;
+                if(val) { 
+                    document.getElementById('start-time').value = this.data.periodTimes[val].start; 
+                    document.getElementById('end-time').value = this.data.periodTimes[val].end; 
+                }
+            },
+
+            addExam() {
+                const subject = document.getElementById('subject').value;
+                const startTime = document.getElementById('start-time').value;
+                const endTime = document.getElementById('end-time').value;
+                if (!subject || !startTime || !endTime) return alert('請填寫完整喔！');
+                
+                this.data.exams.push({ id: Date.now(), subject, start: startTime, end: endTime });
+                this.data.exams.sort((a, b) => a.start.localeCompare(b.start)); 
+                this.renderExams();
+                
+                document.getElementById('subject').value = '';
+                document.getElementById('quick-select').value = '';
+            },
+
+            deleteExam(id) { 
+                this.data.exams = this.data.exams.filter(e => e.id !== id); 
+                this.renderExams(); 
+            },
+
+            renderExams() {
+                this.dom.examList.innerHTML = '';
+                this.data.exams.forEach(exam => {
+                    const item = document.createElement('div');
+                    item.className = 'exam-item';
+                    item.id = `exam-box-${exam.id}`;
+                    item.innerHTML = `
+                        <div class="exam-header">
+                            <div style="display:flex; align-items:baseline; gap:12px;">
+                                <span class="exam-info">${exam.subject}</span>
+                                <span class="exam-time">${exam.start} - ${exam.end}</span>
+                            </div>
+                            <button class="btn-delete" onclick="app.deleteExam(${exam.id})">✕</button>
+                        </div>
+                        <div class="progress-bg"><div class="progress-bar" id="progress-${exam.id}" style="width: 100%;"></div></div>
+                    `;
+                    this.dom.examList.appendChild(item);
+                });
+                localStorage.setItem('exams', JSON.stringify(this.data.exams));
+                this.updateProgress(); 
+            },
+
+            tick() {
+                const now = new Date();
+                this.dom.clock.textContent = now.toLocaleTimeString('zh-TW', { hour12: false });
+                this.updateProgress(now);
+            },
+
+            updateProgress(now = new Date()) {
+                const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                let isStudyingCurrently = false; 
+
+                this.data.exams.forEach(exam => {
+                    const progressBar = document.getElementById(`progress-${exam.id}`);
+                    const examBox = document.getElementById(`exam-box-${exam.id}`);
+                    if (!progressBar || !examBox) return;
+                    
+                    const [sh, sm] = exam.start.split(':').map(Number);
+                    const [eh, em] = exam.end.split(':').map(Number);
+                    const ss = sh * 3600 + sm * 60, es = eh * 3600 + em * 60;
+                    
+                    if (currentSeconds >= es) {
+                        progressBar.style.width = '0%';
+                        examBox.classList.add('exam-finished');
+                    } else if (currentSeconds >= ss) {
+                        isStudyingCurrently = true;
+                        progressBar.style.width = `${((es - currentSeconds) / (es - ss)) * 100}%`;
+                        progressBar.classList.add('progress-active');
+                        examBox.classList.remove('exam-finished');
+                    } else {
+                        progressBar.style.width = '100%';
+                        progressBar.classList.remove('progress-active');
+                        examBox.classList.remove('exam-finished');
+                    }
+                });
+
+                this.updateAvatarState(isStudyingCurrently);
+            },
+
+            avatar: {
+                gifs: ['play.gif', 'play2.gif', 'play3.gif'], 
+                lastState: null,
+                intervalId: null,
+                timeoutId: null,
+                currentIndex: -1
+            },
+
+            updateAvatarState(isStudying) {
+                if (isStudying === this.avatar.lastState) return; 
+                this.avatar.lastState = isStudying;
+                
+                const img = this.dom.avatarImg;
+                
+                clearInterval(this.avatar.intervalId); 
+                clearTimeout(this.avatar.timeoutId);
+                
+                if (isStudying) {
+                    img.style.opacity = '1'; 
+                    img.src = 'study.gif'; 
+                } else {
+                    this.changeToRandomPlayGif(img, true); 
+                    
+                    this.avatar.intervalId = setInterval(() => {
+                        this.changeToRandomPlayGif(img, false);
+                    }, 6000); 
+                }
+            },
+
+            changeToRandomPlayGif(imgEl, isImmediate = false) {
+                if (this.avatar.gifs.length <= 1) {
+                    if(isImmediate) imgEl.src = this.avatar.gifs[0] || '';
+                    return;
+                }
+
+                if (isImmediate) {
+                    this.avatar.currentIndex = Math.floor(Math.random() * this.avatar.gifs.length);
+                    imgEl.src = this.avatar.gifs[this.avatar.currentIndex];
+                    imgEl.style.opacity = '1';
+                } else {
+                    imgEl.style.opacity = '0';
+                    this.avatar.timeoutId = setTimeout(() => {
+                        let randomIndex;
+                        do { randomIndex = Math.floor(Math.random() * this.avatar.gifs.length); } 
+                        while (randomIndex === this.avatar.currentIndex);
+
+                        this.avatar.currentIndex = randomIndex;
+                        imgEl.src = this.avatar.gifs[randomIndex];
+                        imgEl.style.opacity = '1';
+                    }, 500); 
+                }
+            },
+
+            initAudioPlayer() {
+                const p = this.dom.audioPlayer;
+                const s = this.dom.audioSlider;
+                
+                s.oninput = () => { this.data.isDraggingAudio = true; };
+                s.onchange = () => { p.currentTime = s.value; this.data.isDraggingAudio = false; };
+                
+                p.ontimeupdate = () => {
+                    if(!this.data.isDraggingAudio) s.value = p.currentTime;
+                    this.dom.audioCurrent.textContent = this.formatTime(p.currentTime);
+                };
+                
+                p.onloadedmetadata = () => {
+                    s.max = p.duration; 
+                    this.dom.audioDuration.textContent = this.formatTime(p.duration);
+                };
+            },
+
+            formatTime(s) { 
+                return `${Math.floor(s/60).toString().padStart(2,'0')}:${Math.floor(s%60).toString().padStart(2,'0')}`; 
+            },
+
+            togglePlayPause() { 
+                const p = this.dom.audioPlayer;
+                if(!p.src) return; 
+                p.paused ? p.play() : p.pause(); 
+                this.dom.playPauseBtn.textContent = p.paused ? '▶' : '⏸'; 
+            },
+
+            stopAudio() { 
+                this.dom.audioPlayer.pause(); 
+                this.dom.audioPlayer.currentTime = 0; 
+                this.dom.playPauseBtn.textContent = '▶'; 
+            },
+
+            handleFiles(files) {
+                const list = document.getElementById('attachment-list');
+                Array.from(files).forEach(file => {
+                    const url = URL.createObjectURL(file);
+                    const id = 'audio-' + Date.now() + Math.floor(Math.random()*1000);
+                    const item = document.createElement('div');
+                    item.id = id;
+                    item.style = "display:flex; justify-content:space-between; align-items:center; background:var(--clock-bg); padding:8px 12px; border-radius:10px; margin-bottom:8px; border:2px solid transparent; font-size:0.9rem;";
+                    item.innerHTML = `
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:55%;">🎵 ${file.name}</span>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="app.loadAndPlayAudio('${url}', '${file.name}')" style="color:var(--accent); font-weight:bold; background:transparent; border:none; cursor:pointer;">載入</button>
+                            <button onclick="document.getElementById('${id}').remove()" style="color:var(--danger); font-weight:bold; background:transparent; border:none; cursor:pointer;">✕</button>
+                        </div>`;
+                    list.appendChild(item);
+                });
+                document.getElementById('file-input').value = ""; 
+            },
+
+            loadAndPlayAudio(url, title) {
+                this.dom.audioPlayer.src = url; 
+                document.getElementById('audio-title').textContent = title; 
+                this.dom.audioPlayer.play(); 
+                this.dom.playPauseBtn.textContent = '⏸';
+            },
+
+            bindResizers() {
+                const resizerX = document.getElementById('resizer-x');
+                const resizerY = document.getElementById('resizer-y');
+                const leftPane = document.getElementById('left-pane');
+                const topPane = document.getElementById('top-pane');
+                let isResizingX = false, isResizingY = false;
+
+                resizerX.addEventListener('mousedown', (e) => { isResizingX = true; document.body.style.cursor = 'ew-resize'; e.preventDefault(); });
+                resizerY.addEventListener('mousedown', (e) => { isResizingY = true; document.body.style.cursor = 'ns-resize'; e.preventDefault(); });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (isResizingX) {
+                        const newWidth = e.clientX - leftPane.getBoundingClientRect().left;
+                        if (newWidth > 350 && newWidth < window.innerWidth - 300) { leftPane.style.width = `${newWidth}px`; leftPane.style.flex = 'none'; }
+                    }
+                    if (isResizingY) {
+                        const newHeight = e.clientY - topPane.getBoundingClientRect().top;
+                        if (newHeight > 60 && newHeight < window.innerHeight - 250) { topPane.style.height = `${newHeight}px`; topPane.style.flex = 'none'; }
+                    }
+                });
+                document.addEventListener('mouseup', () => { isResizingX = false; isResizingY = false; document.body.style.cursor = 'default'; });
+            },
+
+            initClockObserver() {
+                const observer = new ResizeObserver(entries => {
+                    for (let entry of entries) {
+                        const dynamicSize = Math.min(entry.contentRect.width / 5.5, entry.contentRect.height * 0.55);
+                        this.dom.clock.style.fontSize = Math.max(20, dynamicSize) + 'px';
+                    }
+                });
+                observer.observe(document.getElementById('top-pane'));
+            }
+        };
+
+        window.onload = () => app.init();
+
+    </script>
+</body>
+</html>

@@ -571,13 +571,13 @@
                     const [eh, em] = exam.end.split(':').map(Number);
                     const ss = sh * 3600 + sm * 60, es = eh * 3600 + em * 60;
                     
-                    // 🌟 判斷是否剩下3 秒，觸發無邊界浮空 GIF 動畫！
-                    if (currentSeconds >= es - 4 && currentSeconds <= es && !exam.hasPlayedGif) {
+                    // 🌟 判斷是否剩下3.5 秒，觸發無邊界浮空 GIF 動畫！
+                    if (currentSeconds >= es - 3.5 && currentSeconds <= es && !exam.hasPlayedGif) {
                         exam.hasPlayedGif = true;
                         this.playEndGif(exam.id);
                     } else if (currentSeconds > es) {
                         exam.hasPlayedGif = true; // 已經超時的，避免重整時亂跳
-                    } else if (currentSeconds < es - 4) {
+                    } else if (currentSeconds < es - 3.5) {
                         exam.hasPlayedGif = false; // 還沒到時間的重置狀態
                     }
                     

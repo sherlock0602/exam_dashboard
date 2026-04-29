@@ -377,7 +377,7 @@
     </div>
 
     <script>
-        const app = {
+const app = {
             data: {
                 exams: JSON.parse(localStorage.getItem('exams')) || [],
                 periodTimes: JSON.parse(localStorage.getItem('periodTimes')) || {
@@ -389,7 +389,11 @@
                 themes: ['default', 'dark', 'sakura', 'matcha'],
                 currentThemeIndex: 0,
                 isDraggingAudio: false,
-                isRaining: false
+                isRaining: false,
+                
+                // 🌟 新增：完美播放魔法的關鍵參數
+                alertGifBlob: null,  // 用來存放預載好的 GIF 記憶體資料
+                gifDuration: 3000    // ⏳【重要】請在這裡填入妳的 GIF 總長度！(3000 = 3秒，2500 = 2.5秒)
             },
             
             dom: {}, 
@@ -402,8 +406,20 @@
                 this.renderExams();
                 this.initAudioPlayer();
                 
-                setInterval(() => this.tick(), 1000);
+                // 🌟 啟動時立刻「預載 GIF」到記憶體
+                this.preloadGif();
+                
+                // 🌟 將計時器從 1000 毫秒加速到 100 毫秒！達成「毫秒級精準對齊」
+                setInterval(() => this.tick(), 100);
                 this.tick();
+            },
+
+            preloadGif() {
+                // 先把 GIF 下載到記憶體裡，解決 GitHub 網路延遲的問題
+                fetch('alert.gif')
+                    .then(response => response.blob())
+                    .then(blob => { this.data.alertGifBlob = blob; })
+                    .catch(() => { console.log('找不到 alert.gif 或是正在本地端測試。'); });
             },
 
             cacheDOM() {
@@ -555,11 +571,9 @@
                 this.updateProgress(now);
             },
 
-            // ==========================================
-            // 🌟 進度條與 GIF 動畫觸發邏輯更新
-            // ==========================================
             updateProgress(now = new Date()) {
-                const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                // 🌟 使用「毫秒」來計算，超級精準！
+                const currentMs = now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + now.getMilliseconds();
                 let isStudyingCurrently = false; 
 
                 this.data.exams.forEach(exam => {
@@ -569,18 +583,30 @@
                     
                     const [sh, sm] = exam.start.split(':').map(Number);
                     const [eh, em] = exam.end.split(':').map(Number);
-                    const ss = sh * 3600 + sm * 60, es = eh * 3600 + em * 60;
                     
-                    // 🌟 判斷是否剩下4 秒，觸發無邊界浮空 GIF 動畫！
-                    if (currentSeconds >= es - 4 && currentSeconds <= es && !exam.hasPlayedGif) {
+                    // 算出開始與結束的「毫秒」時間
+                    const startMs = sh * 3600000 + sm * 60000;
+                    const endMs = eh * 3600000 + em * 60000;
+                    
+                    // 距離結束還剩下幾毫秒？
+                    const timeRemainingMs = endMs - currentMs;
+                    
+                    // 🌟 魔法觸發點：只要剩餘時間剛好等於或略小於妳設定的 GIF 長度，就立刻觸發！
+                    // 這保證了動畫播完的「最後一幀」，剛好就是時間條跑完的「那一瞬間」！
+                    if (timeRemainingMs <= this.data.gifDuration && timeRemainingMs > 0 && !exam.hasPlayedGif) {
                         exam.hasPlayedGif = true;
                         this.playEndGif(exam.id);
-                    } else if (currentSeconds > es) {
-                        exam.hasPlayedGif = true; // 已經超時的，避免重整時亂跳
-                    } else if (currentSeconds < es - 4) {
-                        exam.hasPlayedGif = false; // 還沒到時間的重置狀態
+                    } else if (timeRemainingMs < -this.data.gifDuration) {
+                        exam.hasPlayedGif = true; // 超時太久的，不補放
+                    } else if (timeRemainingMs > this.data.gifDuration) {
+                        exam.hasPlayedGif = false; // 時間還很久，乖乖重置
                     }
-                    
+
+                    // 底下是控制 UI 與進度條的，轉回秒數來算
+                    const currentSeconds = Math.floor(currentMs / 1000);
+                    const es = Math.floor(endMs / 1000);
+                    const ss = Math.floor(startMs / 1000);
+
                     if (currentSeconds >= es) {
                         progressBar.style.width = '0%';
                         examBox.classList.add('exam-finished');
@@ -599,35 +625,39 @@
                 this.updateAvatarState(isStudyingCurrently);
             },
 
-            // 🌟 專屬魔法：讓 GIF 浮空顯示在卡片右邊，絕不被截斷
             playEndGif(examId) {
                 const examBox = document.getElementById(`exam-box-${examId}`);
                 if(!examBox) return;
                 
-                // 取得卡片的精準座標
+                let gifUrl = 'alert.gif';
+                // 🌟 如果剛剛有成功預載到記憶體裡，就用記憶體產生一個專屬的零延遲網址！
+                if (this.data.alertGifBlob) {
+                    gifUrl = URL.createObjectURL(this.data.alertGifBlob);
+                } else {
+                    // 如果在本地端測試沒有預載成功，改用傳統加時間戳的方式
+                    gifUrl = 'alert.gif?' + new Date().getTime(); 
+                }
+                
                 const rect = examBox.getBoundingClientRect();
                 const gifEl = document.createElement('img');
                 
-                // 加上時間戳，強迫 GIF 每次都「從頭播放」
-                gifEl.src = 'alert.gif?' + new Date().getTime(); 
-                
-                // 使用 fixed 浮空於所有視窗之上
+                gifEl.src = gifUrl;
                 gifEl.style.position = 'fixed'; 
                 gifEl.style.zIndex = '9999';
                 gifEl.style.pointerEvents = 'none'; 
                 
-                // 算出右側邊緣位置並定位
-                gifEl.style.left = (rect.right - 30) + 'px'; // -30px 讓動畫稍微疊加在邊緣
+                gifEl.style.left = (rect.right - 30) + 'px'; 
                 gifEl.style.top = (rect.top + rect.height / 2) + 'px';
                 gifEl.style.transform = 'translateY(-50%)'; 
-                gifEl.style.width = '500px'; // 動畫預設寬度，可依照妳的 GIF 自行調整
+                gifEl.style.width = '500px'; // 動畫大小
                 
                 document.body.appendChild(gifEl);
                 
-                // 8 秒後自動刪除
+                // 動畫結束後，刪除圖片，並且釋放記憶體
                 setTimeout(() => {
                     gifEl.remove();
-                }, 4000); 
+                    if (this.data.alertGifBlob) URL.revokeObjectURL(gifUrl); 
+                }, this.data.gifDuration); 
             },
 
             avatar: {

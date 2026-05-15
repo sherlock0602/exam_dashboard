@@ -255,7 +255,15 @@
         .font-control input[type="range"] { flex: 1; height: 4px; cursor: pointer; }
 
         .audio-player-ui { background: var(--clock-bg); border: 2px solid var(--clock-bg); border-radius: 15px; padding: 10px; margin-top: auto; flex-shrink: 0; }
-        .avatar-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--clock-bg); border-radius: 15px; border: 2px dashed var(--accent); padding: 5px; }
+        /* 🌟 加上 position: relative 讓它成為圖片的絕對空間 */
+        .avatar-box { 
+            position: relative; 
+            height: 100%; 
+            background: var(--clock-bg); 
+            border-radius: 15px; 
+            border: 2px dashed var(--accent); 
+            overflow: hidden; 
+        }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: var(--panel-bg); width: 520px; max-width: 95%; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 3px solid var(--clock-bg); }
@@ -369,7 +377,7 @@
 
             <div id="tab-avatar" class="tab-content">
                 <div class="avatar-box">
-                    <img id="avatar-image" src="play.gif" style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s ease-in-out;">
+                    <img id="avatar-image" src="play.gif" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; object-fit: contain; transition: opacity 0.2s ease-in-out;">
                 </div>
             </div>
 

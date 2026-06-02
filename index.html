@@ -58,6 +58,7 @@
             background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden;
             background-image: radial-gradient(circle, var(--accent-shadow) 1px, transparent 1px); background-size: 25px 25px;
             transition: background-color 0.4s, color 0.4s;
+            touch-action: none; /* 讓手機版不要因為拖曳視窗而觸發整個網頁的滾動 */
         }
 
         /* ==========================================
@@ -68,8 +69,8 @@
             display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10000; box-shadow: 0 2px 15px var(--accent-shadow);
         }
         .brand { font-size: 1.5rem; font-weight: 900; color: var(--accent); letter-spacing: 2px; }
-        .dock-icons { display: flex; gap: 10px; }
-        .dock-btn { background: var(--clock-bg); border: 2px solid transparent; font-size: 1.3rem; border-radius: 12px; width: 42px; height: 42px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .dock-icons { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: -5px; } /* 手機版工具列可橫向滑動 */
+        .dock-btn { background: var(--clock-bg); border: 2px solid transparent; font-size: 1.3rem; border-radius: 12px; width: 42px; height: 42px; flex-shrink: 0; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
         .dock-btn:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 5px 15px var(--accent-shadow); }
 
         /* ==========================================
@@ -88,7 +89,7 @@
         .window-header {
             background: var(--clock-bg); padding: 8px 15px; cursor: grab; display: flex; justify-content: space-between; align-items: center;
             border-top-left-radius: 13px; border-top-right-radius: 13px; border-bottom: 2px dashed var(--window-border);
-            overflow: hidden;
+            overflow: hidden; touch-action: none;
         }
         .window-header:active { cursor: grabbing; }
         
@@ -98,11 +99,11 @@
         }
         
         .header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-left: 8px; }
-        .btn-zoom { background: var(--panel-bg); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s; }
+        .btn-zoom { background: var(--panel-bg); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s; touch-action: manipulation; }
         .btn-zoom:hover { background: var(--accent); color: #fff; }
 
-        .window-content { padding: 15px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; position: relative; }
-        .resize-handle { position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--accent) 50%); border-bottom-right-radius: 12px; z-index: 10; }
+        .window-content { padding: 15px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; position: relative; touch-action: auto; /* 允許內部上下滾動 */ }
+        .resize-handle { position: absolute; right: 0; bottom: 0; width: 20px; height: 20px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 50%, var(--accent) 50%); border-bottom-right-radius: 12px; z-index: 10; touch-action: none; }
 
         /* ==========================================
            🌧️ 4. 天氣特效層
@@ -118,28 +119,27 @@
         #weather-layer::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1s ease; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cstyle%3E .r %7B fill: none; stroke: rgba(255,255,255,0.6); stroke-width: 1.5; %7D .d %7B fill: rgba(255,255,255,0.6); %7D .g %7B animation: s linear infinite; transform-origin: 0 0; %7D @keyframes s %7B 0%25 %7B transform: scale(0); opacity: 1; %7D 100%25 %7B transform: scale(1); opacity: 0; %7D %7D %3C/style%3E%3Cg transform='translate(80,100)'%3E%3Cg class='g' style='animation-duration: 1.1s; animation-delay: 0s;'%3E%3Cellipse rx='18' ry='6' class='r'/%3E%3Ccircle cx='-10' cy='-10' r='2' class='d'/%3E%3Ccircle cx='10' cy='-6' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(300,200)'%3E%3Cg class='g' style='animation-duration: 1.3s; animation-delay: -0.4s;'%3E%3Cellipse rx='22' ry='7' class='r'/%3E%3Ccircle cx='-12' cy='-12' r='2.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(150,320)'%3E%3Cg class='g' style='animation-duration: 0.9s; animation-delay: -0.8s;'%3E%3Cellipse rx='14' ry='4' class='r'/%3E%3Ccircle cx='8' cy='-8' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(350,50)'%3E%3Cg class='g' style='animation-duration: 1.2s; animation-delay: -0.2s;'%3E%3Cellipse rx='16' ry='5' class='r'/%3E%3Ccircle cx='-8' cy='-8' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 250'%3E%3Cstyle%3E .r %7B fill: none; stroke: rgba(255,255,255,0.5); stroke-width: 1; %7D .d %7B fill: rgba(255,255,255,0.5); %7D .g %7B animation: s linear infinite; transform-origin: 0 0; %7D @keyframes s %7B 0%25 %7B transform: scale(0); opacity: 1; %7D 100%25 %7B transform: scale(1); opacity: 0; %7D %7D %3C/style%3E%3Cg transform='translate(40,60)'%3E%3Cg class='g' style='animation-duration: 0.8s; animation-delay: -0.1s;'%3E%3Cellipse rx='10' ry='3' class='r'/%3E%3Ccircle cx='6' cy='-5' r='1' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(180,120)'%3E%3Cg class='g' style='animation-duration: 1s; animation-delay: -0.5s;'%3E%3Cellipse rx='12' ry='4' class='r'/%3E%3Ccircle cx='-5' cy='-6' r='1.5' class='d'/%3E%3C/g%3E%3C/g%3E%3Cg transform='translate(90,200)'%3E%3Cg class='g' style='animation-duration: 0.9s; animation-delay: -0.9s;'%3E%3Cellipse rx='15' ry='5' class='r'/%3E%3Ccircle cx='-8' cy='-6' r='1' class='d'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); background-size: 400px 400px, 250px 250px; background-position: 0 0, 50px 50px; }
 
         /* ==========================================
-           🎯 5. UI 元件與排版
+           🎯 5. UI 元件與排版優化
            ========================================== */
-        .input-group { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; overflow-x: auto; padding-bottom: 6px; flex-shrink: 0; }
+        .input-group { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; overflow-x: auto; padding-bottom: 6px; flex-shrink: 0; touch-action: manipulation; }
         
         input[type="text"], input[type="time"], select { padding: 8px 10px; border-radius: 10px; border: 2px solid var(--clock-bg); background: var(--panel-bg); color: var(--text-main); font-size: 14px; outline: none; flex-shrink: 0; }
         input[type="text"] { flex: 1; min-width: 100px; }
         input[type="time"] { width: auto; }
         select { min-width: 90px; }
         input[type="text"]:focus, input[type="time"]:focus, select:focus { border-color: var(--accent); }
-        .btn-add { padding: 8px 15px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: bold; cursor: pointer; border: none; flex-shrink: 0; white-space: nowrap; font-size: 14px; }
+        .btn-add { padding: 8px 15px; border-radius: 10px; background: var(--accent); color: #fff; font-weight: bold; cursor: pointer; border: none; flex-shrink: 0; white-space: nowrap; font-size: 14px; touch-action: manipulation; }
         
         #exam-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
         .exam-item { background: var(--panel-bg); padding: 12px; border-radius: 12px; border: 2px solid var(--unfinished-border); border-left-width: 6px; transition: all 0.5s ease;}
         .exam-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: 900; font-size: var(--content-font-size); }
         .exam-time { color: var(--accent); font-family: 'Poppins', sans-serif; margin-right: 8px;}
         .progress-bg { width: 100%; height: 6px; background: var(--clock-bg); border-radius: 3px; overflow: hidden; }
-        
         .progress-bar { height: 100%; width: 100%; background: var(--text-muted); }
         .progress-active { background: var(--success); }
-        .btn-delete { background: transparent; color: var(--danger); border: 2px solid var(--danger); border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;}
+        .btn-delete { background: transparent; color: var(--danger); border: 2px solid var(--danger); border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; touch-action: manipulation;}
 
-        /* ✨ 螢幕破裂特效 (回歸原版實體橫向彩色亮線) */
+        /* ✨ 螢幕破裂特效 (回歸原版，修復黑條遮擋) */
         .exam-finished { 
             background-color: var(--panel-bg) !important; 
             border: 2px solid var(--finished-border) !important; 
@@ -150,17 +150,13 @@
             animation: screen-flicker-light 0.4s 1 forwards !important; 
         }
         .exam-finished .exam-header > span, .exam-finished .exam-time { color: var(--text-main) !important; text-shadow: -1px 0 0 rgba(0,229,255,0.5), 1px 0 0 rgba(255,0,60,0.5) !important; position: relative; z-index: 2; }
-        .exam-finished .progress-bg { opacity: 0.3 !important; }
+        
+        /* ✨ 修復：隱藏原本的進度條軌道，把空間還給 NO SIGNAL 特效 */
+        .exam-finished .progress-bg { display: none !important; }
+        
         .exam-finished .btn-delete { background: transparent !important; border: 2px solid rgba(255, 0, 60, 0.5) !important; color: #ff003c !important; position: relative; z-index: 2; }
         .exam-finished .btn-delete:hover { background: #ff003c !important; color: #fff !important; }
-        
-        /* 乖乖待著的 NO SIGNAL，重回原位 */
-        .exam-finished::before { 
-            content: 'NO SIGNAL'; position: absolute; bottom: 12px; right: 45px; 
-            font-size: 0.65rem; color: #ff003c; background: var(--panel-bg); 
-            padding: 2px 6px; font-family: 'Poppins', monospace; border: 1px solid rgba(255, 0, 60, 0.5); 
-            border-radius: 4px; z-index: 2; 
-        }
+        .exam-finished::before { content: 'NO SIGNAL'; position: absolute; bottom: 8px; right: 45px; font-size: 0.65rem; color: #ff003c; background: var(--panel-bg); padding: 2px 6px; font-family: 'Poppins', monospace; border: 1px solid rgba(255, 0, 60, 0.5); border-radius: 4px; z-index: 2; }
         @keyframes screen-flicker-light { 0% { transform: translateY(0); filter: brightness(1); } 20% { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 4px 10px rgba(255,0,60,0.2); } 40% { transform: translateY(2px); } 100% { transform: translateY(0); filter: none; } }
 
         /* 時鐘 */
@@ -169,7 +165,7 @@
         
         /* 豆芽狀態 */
         #win-avatar { background: var(--clock-bg); border: 3px dashed var(--accent); overflow: hidden; }
-        .avatar-box { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: relative; cursor: grab; }
+        .avatar-box { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; position: relative; cursor: grab; touch-action: none; }
         .avatar-box:active { cursor: grabbing; }
         .avatar-box img { width: 100%; height: 100%; object-fit: contain; padding: 10px; transition: opacity 0.5s ease; pointer-events: none;}
         .avatar-fallback { font-size: 5rem; display: none; user-select: none; pointer-events: none;}
@@ -185,7 +181,6 @@
 </head>
 <body>
 
-    <!-- 頂部工具列 -->
     <div id="top-bar">
         <div class="brand">🌱 聽憑風引 OS</div>
         <div class="dock-icons">
@@ -204,7 +199,6 @@
         <div id="weather-layer"></div>
         <audio id="rain-audio" loop src="https://actions.google.com/sounds/v1/weather/heavy_rain.ogg"></audio>
 
-        <!-- 視窗 1：考試清單 -->
         <div class="os-window active" id="win-exams" data-font-size="16" style="width: 600px; height: 400px; top: 20px; left: 20px;">
             <div class="window-header drag-handle">
                 <span class="window-title">📝 考試排程</span>
@@ -231,7 +225,6 @@
             <div class="resize-handle"></div>
         </div>
 
-        <!-- 視窗 2：時鐘 -->
         <div class="os-window active" id="win-clock" style="width: 320px; height: 120px; top: 20px; left: 20px;">
             <div class="window-header drag-handle">
                 <span class="window-title">⏱️ 當前時間</span>
@@ -242,7 +235,6 @@
             <div class="resize-handle"></div>
         </div>
 
-        <!-- 視窗 3：小豆芽狀態 -->
         <div class="os-window active" id="win-avatar" style="width: 300px; height: 300px; top: 20px; left: 20px;">
             <div class="avatar-box drag-handle">
                 <img id="avatar-image" src="play.gif" alt="小豆芽動畫">
@@ -251,7 +243,6 @@
             <div class="resize-handle"></div>
         </div>
 
-        <!-- 視窗 4：筆記 -->
         <div class="os-window" id="win-notes" data-font-size="16" style="width: 350px; height: 400px; top: 20px; left: 20px;">
             <div class="window-header drag-handle">
                 <span class="window-title">📌 提醒筆記</span>
@@ -266,7 +257,6 @@
             <div class="resize-handle"></div>
         </div>
         
-        <!-- 視窗 5：音樂播放器 -->
         <div class="os-window" id="win-audio" style="width: 400px; height: 300px; top: 20px; left: 20px;">
             <div class="window-header drag-handle">
                 <span class="window-title">🎵 音樂播放器</span>
@@ -299,7 +289,6 @@
         </div>
     </div>
 
-    <!-- 設定 Modal -->
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 style="color: var(--accent); margin-bottom: 15px; text-align: center;">⚙️ 節次時間設定</h3>
@@ -325,12 +314,14 @@
                 currentThemeIndex: 0,
                 zIndexCounter: 100,
                 alertGifBlob: null, gifDuration: 4000, gifOffset: -1000,
-                isDraggingAudio: false
+                isDraggingAudio: false,
+                windowStates: JSON.parse(localStorage.getItem('windowStates')) || {}
             },
             
             avatar: { gifs: ['play.gif', 'play2.gif', 'play3.gif'], lastState: null, intervalId: null, timeoutId: null, currentIndex: -1 },
 
             init() {
+                this.loadWindowStates();
                 this.initWindows();
                 this.loadSettings();
                 this.renderExams();
@@ -342,8 +333,36 @@
                 this.tick();
             },
 
+            loadWindowStates() {
+                if (Object.keys(this.data.windowStates).length > 0) {
+                    let maxZ = 100;
+                    document.querySelectorAll('.os-window').forEach(win => {
+                        const state = this.data.windowStates[win.id];
+                        if (state) {
+                            win.style.left = state.left; win.style.top = state.top;
+                            win.style.width = state.width; win.style.height = state.height;
+                            win.style.zIndex = state.zIndex;
+                            if (state.zIndex > maxZ) maxZ = state.zIndex;
+                            if (state.active) win.classList.add('active'); else win.classList.remove('active');
+                        }
+                    });
+                    this.data.zIndexCounter = maxZ + 1;
+                }
+            },
+
+            saveWindowStates() {
+                document.querySelectorAll('.os-window').forEach(win => {
+                    this.data.windowStates[win.id] = {
+                        left: win.style.left, top: win.style.top, width: win.style.width, height: win.style.height,
+                        zIndex: parseInt(win.style.zIndex) || 100, active: win.classList.contains('active')
+                    };
+                });
+                localStorage.setItem('windowStates', JSON.stringify(this.data.windowStates));
+            },
+
             preloadGif() { fetch('alert.gif').then(response => response.blob()).then(blob => { this.data.alertGifBlob = blob; }).catch(() => {}); },
 
+            // ✨ 全面升級支援「手機/平板多點觸控」的視窗管理系統
             initWindows() {
                 document.querySelectorAll('.os-window').forEach(win => {
                     const handle = win.querySelector('.drag-handle');
@@ -351,30 +370,62 @@
                     let isDragging = false, isResizing = false;
                     let offsetX, offsetY, startW, startH, startX, startY;
 
+                    const getEventPos = (e) => e.touches && e.touches.length > 0 ? e.touches[0] : e;
+
+                    const startDrag = (e) => {
+                        if(e.target.classList.contains('btn-zoom')) return;
+                        isDragging = true; 
+                        const pos = getEventPos(e);
+                        offsetX = pos.clientX - win.offsetLeft; 
+                        offsetY = pos.clientY - win.offsetTop;
+                        win.style.zIndex = ++this.data.zIndexCounter; 
+                        document.body.style.userSelect = 'none'; 
+                        app.saveWindowStates();
+                    };
+
+                    const startResize = (e) => {
+                        isResizing = true; 
+                        startW = win.offsetWidth; startH = win.offsetHeight;
+                        const pos = getEventPos(e);
+                        startX = pos.clientX; startY = pos.clientY;
+                        win.style.zIndex = ++this.data.zIndexCounter; 
+                        document.body.style.userSelect = 'none'; 
+                        e.stopPropagation(); 
+                        app.saveWindowStates();
+                    };
+
                     if (handle) {
-                        handle.addEventListener('mousedown', (e) => {
-                            if(e.target.classList.contains('btn-zoom')) return;
-                            isDragging = true; offsetX = e.clientX - win.offsetLeft; offsetY = e.clientY - win.offsetTop;
-                            win.style.zIndex = ++this.data.zIndexCounter; document.body.style.userSelect = 'none'; 
-                        });
+                        handle.addEventListener('mousedown', startDrag);
+                        handle.addEventListener('touchstart', startDrag, {passive: true});
                     }
 
                     if (resizer) {
-                        resizer.addEventListener('mousedown', (e) => {
-                            isResizing = true; startW = win.offsetWidth; startH = win.offsetHeight;
-                            startX = e.clientX; startY = e.clientY;
-                            win.style.zIndex = ++this.data.zIndexCounter; document.body.style.userSelect = 'none'; 
-                            e.stopPropagation(); e.preventDefault(); 
-                        });
+                        resizer.addEventListener('mousedown', startResize);
+                        resizer.addEventListener('touchstart', startResize, {passive: true});
                     }
 
-                    document.addEventListener('mousemove', (e) => {
-                        if (isDragging) { win.style.left = (e.clientX - offsetX) + 'px'; win.style.top = Math.max(0, e.clientY - offsetY) + 'px'; }
-                        if (isResizing) { win.style.width = Math.max(200, startW + e.clientX - startX) + 'px'; win.style.height = Math.max(100, startH + e.clientY - startY) + 'px'; }
-                    });
+                    const onMove = (e) => {
+                        if (!isDragging && !isResizing) return;
+                        if (e.type === 'touchmove') e.preventDefault(); // 防止手機在拖曳時滑動網頁
+                        const pos = getEventPos(e);
+                        if (isDragging) { win.style.left = (pos.clientX - offsetX) + 'px'; win.style.top = Math.max(0, pos.clientY - offsetY) + 'px'; }
+                        if (isResizing) { win.style.width = Math.max(200, startW + pos.clientX - startX) + 'px'; win.style.height = Math.max(100, startH + pos.clientY - startY) + 'px'; }
+                    };
 
-                    document.addEventListener('mouseup', () => { isDragging = false; isResizing = false; document.body.style.userSelect = ''; });
-                    win.addEventListener('mousedown', () => { win.style.zIndex = ++this.data.zIndexCounter; });
+                    const onEnd = () => { 
+                        let changed = isDragging || isResizing;
+                        isDragging = false; isResizing = false; document.body.style.userSelect = ''; 
+                        if(changed) app.saveWindowStates();
+                    };
+
+                    document.addEventListener('mousemove', onMove);
+                    document.addEventListener('touchmove', onMove, {passive: false});
+
+                    document.addEventListener('mouseup', onEnd);
+                    document.addEventListener('touchend', onEnd);
+                    
+                    win.addEventListener('mousedown', () => { win.style.zIndex = ++this.data.zIndexCounter; app.saveWindowStates(); });
+                    win.addEventListener('touchstart', () => { win.style.zIndex = ++this.data.zIndexCounter; app.saveWindowStates(); }, {passive: true});
                 });
             },
 
@@ -391,6 +442,7 @@
                 const win = document.getElementById(id);
                 if (win.classList.contains('active')) win.classList.remove('active');
                 else { win.classList.add('active'); win.style.zIndex = ++this.data.zIndexCounter; }
+                this.saveWindowStates();
             },
 
             initClockObserver() {

@@ -436,7 +436,7 @@
                 const win = document.getElementById(windowId);
                 let currentSize = parseInt(win.getAttribute('data-font-size')) || 16;
                 currentSize += (dir * 2); 
-                currentSize = Math.max(12, Math.min(32, currentSize));
+                currentSize = Math.max(12, Math.min(64, currentSize));
                 win.setAttribute('data-font-size', currentSize);
                 win.style.setProperty('--content-font-size', currentSize + 'px');
             },

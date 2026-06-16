@@ -710,46 +710,60 @@
 
             calc: {
                 expr: '',
+                // ✨ 終極加強版：全面解決蘋果/平板語音符號與智慧括號問題
                 processMath(text) {
-                    // ✨ 1. 處理蘋果/平板語音轉譯的特殊數學與全形符號
+                    // 1. 全面正規化：處理蘋果/安卓不同的全形符號、特殊數學符號與中文
                     let str = text
-                        .replace(/×/g, '*')      // 處理蘋果的乘號
-                        .replace(/÷/g, '/')      // 處理蘋果的除號
-                        .replace(/＋/g, '+')     // 處理全形加號
-                        .replace(/－/g, '-')     // 處理全形減號
-                        .replace(/（/g, '(')     // 處理全形左括號
-                        .replace(/）/g, ')')     // 處理全形右括號
-                        .replace(/加/g, '+')
-                        .replace(/減/g, '-')
+                        .replace(/\s+/g, '')             // 移除所有空白
+                        .replace(/[×✖✕∗xX]/g, '*')       // 處理所有可能的乘號
                         .replace(/乘以|乘/g, '*')
+                        .replace(/[÷➗]/g, '/')           // 處理所有可能的除號
                         .replace(/除以|除/g, '/')
-                        .replace(/x/gi, '*')
-                        .replace(/個/g, '');
+                        .replace(/[＋]/g, '+')           // 處理全形加號
+                        .replace(/加上|加/g, '+')
+                        .replace(/[－—–]/g, '-')         // 處理全形減號
+                        .replace(/減去|減/g, '-')
+                        .replace(/點/g, '.')             // 處理小數點
+                        .replace(/個/g, '')              // 移除贅字
+                        .replace(/[（）\(\)\[\]\{\}【】]/g, '_B_') // 統一所有括號符號
+                        .replace(/左括號|左括弧|右括號|右括弧|括號|括弧/g, '_B_'); // 統一所有括號中文
 
-                    str = str.replace(/左括號|左括弧/g, '(').replace(/右括號|右括弧/g, ')');
-
-                    // 2. 智慧括號：如果語音只翻出單字「括號/括弧」
-                    let parts = str.split(/括號|括弧/);
+                    // 2. 智慧括號解析：根據數學邏輯自動推斷是左括號還是右括號
                     let finalStr = '';
-                    for(let i = 0; i < parts.length - 1; i++) {
-                        finalStr += parts[i];
-                        let currentOpen = (finalStr.match(/\(/g) || []).length;
-                        let currentClose = (finalStr.match(/\)/g) || []).length;
-                        finalStr += (currentOpen > currentClose) ? ')' : '(';
+                    let openCount = 0;
+                    for (let i = 0; i < str.length; i++) {
+                        if (str[i] === '_' && str.substring(i, i + 3) === '_B_') {
+                            // 如果前面是數字或右括號，且目前有未關閉的左括號，那這個就是右括號
+                            let prevChar = finalStr.length > 0 ? finalStr[finalStr.length - 1] : '';
+                            let isPrevNumberOrClose = /[0-9\)]/.test(prevChar);
+
+                            if (openCount > 0 && isPrevNumberOrClose) {
+                                finalStr += ')';
+                                openCount--;
+                            } else {
+                                finalStr += '(';
+                                openCount++;
+                            }
+                            i += 2; // 跳過 _B_ 的剩餘字元
+                        } else {
+                            finalStr += str[i];
+                        }
                     }
-                    finalStr += parts[parts.length - 1]; 
-                    
-                    // 3. 清理非數學字元的雜訊
+
+                    // 3. 自動補上省略的乘號 (例如: 3(5+2) 會變成 3*(5+2))
+                    finalStr = finalStr.replace(/([0-9\)])\(/g, '$1*(');
+
+                    // 4. 清理非數學字元的雜訊 (過濾掉「計算」、「幫我算」等前面的字)
                     let cleanStr = finalStr.replace(/[^0-9\+\-\*\/\.\(\)]/g, ''); 
-                    
-                    // ✨ 4. 終極防線：不管括號是怎麼生成的，算式結尾自動補齊所有缺少的右括號
+
+                    // 5. 終極防線：補齊結尾缺失的右括號
                     let finalOpen = (cleanStr.match(/\(/g) || []).length;
                     let finalClose = (cleanStr.match(/\)/g) || []).length;
                     while (finalOpen > finalClose) {
                         cleanStr += ')';
                         finalClose++;
                     }
-                    
+
                     if(cleanStr) {
                         this.expr = cleanStr;
                         document.getElementById('calc-expr').textContent = text + " => " + this.expr;

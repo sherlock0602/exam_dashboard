@@ -373,7 +373,6 @@
         </div>
     </div>
 
-    <!-- 設定控制中心 -->
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 style="color: var(--accent); margin-bottom: 15px; text-align: center; font-weight: 900; letter-spacing: 2px;">⚙️ 系統設定中心</h3>
@@ -635,7 +634,6 @@
                 if (win.classList.contains('active')) {
                     win.classList.remove('active');
                     
-                    // ✨ 釋放資源：如果是 iframe 視窗，隱藏時把網址清空，切斷攝影機與麥克風
                     const iframe = win.querySelector('iframe');
                     if (iframe && iframe.src && iframe.src !== 'about:blank') {
                         iframe.setAttribute('data-src', iframe.src); 
@@ -645,7 +643,6 @@
                     win.classList.add('active'); 
                     win.style.zIndex = ++this.data.zIndexCounter; 
                     
-                    // ✨ 重新載入：顯示視窗時，把原本的網址塞回去，讓它重新啟動
                     const iframe = win.querySelector('iframe');
                     if (iframe && iframe.hasAttribute('data-src')) {
                         iframe.src = iframe.getAttribute('data-src');
@@ -714,9 +711,24 @@
             calc: {
                 expr: '',
                 processMath(text) {
-                    let str = text.replace(/加/g, '+').replace(/減/g, '-').replace(/乘以|乘/g, '*').replace(/除以|除/g, '/').replace(/x/gi, '*').replace(/個/g, '');
+                    // ✨ 1. 處理蘋果/平板語音轉譯的特殊數學與全形符號
+                    let str = text
+                        .replace(/×/g, '*')      // 處理蘋果的乘號
+                        .replace(/÷/g, '/')      // 處理蘋果的除號
+                        .replace(/＋/g, '+')     // 處理全形加號
+                        .replace(/－/g, '-')     // 處理全形減號
+                        .replace(/（/g, '(')     // 處理全形左括號
+                        .replace(/）/g, ')')     // 處理全形右括號
+                        .replace(/加/g, '+')
+                        .replace(/減/g, '-')
+                        .replace(/乘以|乘/g, '*')
+                        .replace(/除以|除/g, '/')
+                        .replace(/x/gi, '*')
+                        .replace(/個/g, '');
+
                     str = str.replace(/左括號|左括弧/g, '(').replace(/右括號|右括弧/g, ')');
 
+                    // 2. 智慧括號：如果語音只翻出單字「括號/括弧」
                     let parts = str.split(/括號|括弧/);
                     let finalStr = '';
                     for(let i = 0; i < parts.length - 1; i++) {
@@ -726,7 +738,17 @@
                         finalStr += (currentOpen > currentClose) ? ')' : '(';
                     }
                     finalStr += parts[parts.length - 1]; 
+                    
+                    // 3. 清理非數學字元的雜訊
                     let cleanStr = finalStr.replace(/[^0-9\+\-\*\/\.\(\)]/g, ''); 
+                    
+                    // ✨ 4. 終極防線：不管括號是怎麼生成的，算式結尾自動補齊所有缺少的右括號
+                    let finalOpen = (cleanStr.match(/\(/g) || []).length;
+                    let finalClose = (cleanStr.match(/\)/g) || []).length;
+                    while (finalOpen > finalClose) {
+                        cleanStr += ')';
+                        finalClose++;
+                    }
                     
                     if(cleanStr) {
                         this.expr = cleanStr;

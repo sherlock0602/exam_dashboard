@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📝 學生作業板</title>
+    <!-- 引入 PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: 'Quicksand', sans-serif; background: #f0f8ff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
+        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 2px solid #74b9ff; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        button { background: #74b9ff; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; }
+        #status { font-size: 0.9rem; color: #e17055; font-weight: bold; margin-bottom: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="text-align: center; color: #34495e;">🎨 繪圖與作業繳交</h2>
+        <div id="status">連線中，請稍候...</div>
+        
+        <input type="text" id="student-name" placeholder="請輸入您的姓名...">
+        
+        <!-- 畫布與錄音功能將在這裡實作 -->
+        <div style="width: 100%; height: 300px; background: #eee; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; color: #aaa;">
+            (畫布區域預留位置)
+        </div>
+
+        <button id="btn-submit" onclick="submitWork()" disabled>🚀 傳送給老師</button>
+    </div>
+
+    <script>
+        // 1. 從網址列抓取主控台的 Room ID (QR Code 傳過來的)
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId');
+        
+        let peer = null;
+        let conn = null;
+
+        if (!roomId) {
+            document.getElementById('status').textContent = '❌ 錯誤：找不到主控台 ID，請重新掃描 QR Code。';
+        } else {
+            // 2. 初始化 PeerJS 並連線到主控台
+            peer = new Peer();
+            peer.on('open', (id) => {
+                conn = peer.connect(roomId);
+                
+                conn.on('open', () => {
+                    document.getElementById('status').textContent = '🟢 已成功連線至主控台！';
+                    document.getElementById('status').style.color = '#00b894';
+                    document.getElementById('btn-submit').disabled = false;
+                });
+            });
+        }
+
+        // 3. 測試發送資料
+        function submitWork() {
+            const name = document.getElementById('student-name').value;
+            if (!name) return alert('請先輸入姓名喔！');
+
+            // 目前先傳送一張測試用的假圖片，確認通訊暢通
+            const fakeImageBase64 = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23a29bfe'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' fill='white' text-anchor='middle' alignment-baseline='middle'%3ETEST%3C/text%3E%3C/svg%3E";
+
+            conn.send({
+                type: 'submit_homework',
+                author: name,
+                image: fakeImageBase64,
+                audio: null // 錄音檔後續加入
+            });
+
+            alert('作業已傳送！請看主控台是否出現縮圖。');
+        }
+    </script>
+</body>
+</html>

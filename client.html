@@ -117,12 +117,28 @@
         
         let isDrawing = false, tool = 'pen', color = '#000000', size = 4;
 
-        // 初始化畫布尺寸並填滿白底 (避免存圖時背景變透明黑)
+        // 增強版：記住畫布內容的 Resize 功能
         function resizeCanvas() {
+            // 1. 先把當前的畫面存下來
+            let savedData = null;
+            if (canvas.width > 0 && canvas.height > 0) {
+                savedData = canvas.toDataURL();
+            }
+
+            // 2. 調整畫布大小
             canvas.width = wrapper.clientWidth;
             canvas.height = wrapper.clientHeight;
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 3. 把剛才存下來的畫面畫回去
+            if (savedData) {
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = savedData;
+            }
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();

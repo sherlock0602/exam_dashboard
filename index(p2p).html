@@ -569,11 +569,34 @@
                 generateQR(id) {
                     const currentDir = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
                     const clientUrl = `${currentDir}client.html?roomId=${id}`;
-                    document.getElementById('qrcode-box').innerHTML = ''; 
-                    new QRCode(document.getElementById('qrcode-box'), {
+                    const qrBox = document.getElementById('qrcode-box');
+                    qrBox.innerHTML = ''; 
+                    
+                    new QRCode(qrBox, {
                         text: clientUrl, width: 100, height: 100,
                         colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
                     });
+
+                    // 💡 修正 3：點擊 QR Code 產生全螢幕放大版
+                    qrBox.style.cursor = 'pointer';
+                    qrBox.title = '點擊放大 QR Code';
+                    qrBox.onclick = () => {
+                        const modal = document.createElement('div');
+                        modal.style = "position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:999999; display:flex; justify-content:center; align-items:center; flex-direction:column; gap:20px; cursor:pointer;";
+                        modal.onclick = () => modal.remove();
+                        
+                        const bigQr = document.createElement('div');
+                        bigQr.style = "background:white; padding:30px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5);";
+                        new QRCode(bigQr, { text: clientUrl, width: 350, height: 350, correctLevel: QRCode.CorrectLevel.H });
+                        
+                        const hint = document.createElement('div');
+                        hint.textContent = '請學生掃描上方 QR Code，點擊螢幕任意處關閉';
+                        hint.style = "color:white; font-size:1.2rem; font-weight:bold;";
+                        
+                        modal.appendChild(bigQr);
+                        modal.appendChild(hint);
+                        document.body.appendChild(modal);
+                    };
                 },
 
                 renderNewHomework(data) {
@@ -587,10 +610,8 @@
                     img.src = data.image;
                     img.style = "width: 100%; height: 80px; object-fit: contain; border-radius: 5px; background: white; cursor: pointer; border: 1px dashed var(--clock-bg);";
                     
-                    /* 💡 修正 4：點擊縮圖不再開啟新分頁，而是呼叫底下的動態視窗產生器 */
-                    img.onclick = () => {
-                        app.p2p.openHomeworkViewer(data.author, data.image);
-                    };
+                    // 已經實作過的：點擊在終端開啟動態視窗教學
+                    img.onclick = () => { app.p2p.openHomeworkViewer(data.author, data.image); };
                     
                     const name = document.createElement('span');
                     name.style = "font-size: 0.8rem; font-weight: bold; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 100%; margin-top: 5px;";
@@ -603,9 +624,23 @@
                         const audioBtn = document.createElement('button');
                         audioBtn.innerHTML = "🎵 播放錄音";
                         audioBtn.style = "font-size: 0.75rem; padding: 5px 8px; border-radius: 5px; border: none; background: var(--accent); color: white; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold;";
+                        
+                        // 💡 修正 1：加入播放與暫停的切換邏輯
+                        const audio = new Audio(data.audio);
                         audioBtn.onclick = () => {
-                            const audio = new Audio(data.audio);
-                            audio.play();
+                            if (audio.paused) {
+                                audio.play();
+                                audioBtn.innerHTML = "⏸ 暫停錄音";
+                                audioBtn.style.background = "var(--success)";
+                            } else {
+                                audio.pause();
+                                audioBtn.innerHTML = "🎵 繼續播放";
+                                audioBtn.style.background = "var(--accent)";
+                            }
+                        };
+                        audio.onended = () => { 
+                            audioBtn.innerHTML = "🎵 播放錄音"; 
+                            audioBtn.style.background = "var(--accent)";
                         };
                         card.appendChild(audioBtn);
                     }
@@ -626,13 +661,11 @@
                     }
                 },
 
-                /* 💡 修正 4：動態建立一個 OS 視窗來顯示作業，方便搭配全域白板功能 */
                 openHomeworkViewer(author, imgSrc) {
                     const winId = 'hw-view-' + Date.now();
                     const win = document.createElement('div');
                     win.className = 'os-window active';
                     win.id = winId;
-                    // 預設開在一個夠大的尺寸，方便教學
                     win.style.width = '700px';
                     win.style.height = '500px';
                     win.style.top = '10vh';

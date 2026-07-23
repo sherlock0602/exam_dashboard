@@ -13,7 +13,6 @@
         * { box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
         body { background: var(--bg); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        /* 💡 修正 1：加大容器寬度，讓計算空間更大 */
         .container { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); width: 100%; max-width: 95%; display: flex; flex-direction: column; gap: 12px; }
         
         h2 { margin: 0; text-align: center; color: var(--text); font-weight: 900; font-size: 1.3rem; }
@@ -28,16 +27,14 @@
         .color-picker { width: 30px; height: 30px; border: none; padding: 0; cursor: pointer; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
         .file-upload { background: #b2bec3; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; }
         
-        /* 💡 修正 1：高度改為 65vh，確保在平板上有極大的書寫空間 */
-        .canvas-container { position: relative; width: 100%; height: 65vh; min-height: 400px; border: 2px dashed #b2bec3; border-radius: 8px; overflow: hidden; background: white; touch-action: none; }
+        /* 雙層畫布容器 */
+        .canvas-container { position: relative; width: 100%; height: 65vh; min-height: 400px; border: 2px dashed #b2bec3; border-radius: 8px; overflow: hidden; background: #e2e2e2; touch-action: none; }
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
         
         .audio-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: #f5f6fa; padding: 10px; border-radius: 8px; }
         .btn-record { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.3s; flex-shrink: 0; }
         .btn-record.recording { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214, 48, 49, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(214, 48, 49, 0); } 100% { transform: scale(1); } }
-        
-        /* 💡 修正 3：讓音檔預覽播放器在手機/平板上能正確顯示並播放 */
         #audio-preview { display: none; height: 35px; max-width: 200px; flex: 1; }
 
         .btn-submit { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 5px; }
@@ -46,7 +43,6 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h2>🎨 學生作業繳交區</h2>
         <div id="status">⏳ 連線中，請稍候...</div>
@@ -57,14 +53,22 @@
             <button class="tool-btn active" id="btn-pen" onclick="setTool('pen')">🖊️ 畫筆</button>
             <button class="tool-btn" id="btn-eraser" onclick="setTool('eraser')">🧽 橡皮擦</button>
             <input type="color" id="color-picker" class="color-picker" value="#000000" onchange="setColor(this.value)">
-            <input type="range" id="size-slider" min="2" max="30" value="4" onchange="setSize(this.value)" style="width: 80px;">
+            <input type="range" id="size-slider" min="2" max="30" value="4" onchange="setSize(this.value)" style="width: 70px;">
+            
+            <!-- 🌟 新增：移動底圖與縮放 -->
+            <button class="tool-btn" id="btn-move" onclick="setTool('move')">🖐️ 移動底圖</button>
+            <input type="range" id="img-scale" min="0.1" max="3" step="0.05" value="1" onchange="redrawBg()" style="display:none; width: 70px;" title="縮放底圖">
+            
             <label class="file-upload">
                 <input type="file" accept="image/*" style="display:none;" onchange="loadImage(this)">🖼️ 插入底圖
             </label>
-            <button class="tool-btn" onclick="clearCanvas()" style="margin-left:auto; border-color:var(--danger); color:var(--danger);">🗑️ 清空</button>
+            <button class="tool-btn" onclick="clearCanvas()" style="margin-left:auto; border-color:var(--danger); color:var(--danger);">🗑️ 清空筆跡</button>
         </div>
 
         <div class="canvas-container" id="canvas-wrapper">
+            <!-- 底層畫布：專門放圖片 -->
+            <canvas id="bg-canvas"></canvas>
+            <!-- 頂層畫布：專門手寫，透明背景 -->
             <canvas id="board"></canvas>
         </div>
 
@@ -97,104 +101,153 @@
                 });
                 conn.on('close', () => alert('與老師的連線已斷開，請重新整理網頁。'));
             });
-            peer.on('error', (err) => { document.getElementById('status').textContent = '⚠️ 連線失敗，請確認網路狀態。'; });
+            peer.on('error', () => { document.getElementById('status').textContent = '⚠️ 連線失敗，請確認網路狀態。'; });
         }
 
+        // ==========================================
+        // 🌟 雙層高解析畫布系統 (Retina Ready)
+        // ==========================================
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
         const canvas = document.getElementById('board');
         const ctx = canvas.getContext('2d');
         const wrapper = document.getElementById('canvas-wrapper');
         
+        const DPR = window.devicePixelRatio || 2; // 提升清晰度
         let isDrawing = false, tool = 'pen', color = '#000000', size = 4;
+        
+        let loadedImg = null, imgX = 0, imgY = 0, imgScale = 1;
+        let lastPos = {x: 0, y: 0};
 
         function resizeCanvas() {
+            const rect = wrapper.getBoundingClientRect();
+            
+            // 儲存現有筆跡
             let savedData = null;
             if (canvas.width > 0 && canvas.height > 0) savedData = canvas.toDataURL();
 
-            canvas.width = wrapper.clientWidth;
-            canvas.height = wrapper.clientHeight;
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // 設定高解析度內部尺寸
+            bgCanvas.width = rect.width * DPR;
+            bgCanvas.height = rect.height * DPR;
+            canvas.width = rect.width * DPR;
+            canvas.height = rect.height * DPR;
+            
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
 
+            // 恢復筆跡與重繪底圖
             if (savedData) {
                 const img = new Image();
-                img.onload = () => { ctx.drawImage(img, 0, 0); };
+                img.onload = () => ctx.drawImage(img, 0, 0);
                 img.src = savedData;
             }
+            redrawBg();
         }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        
+        // 渲染底圖層 (永遠保持白底)
+        function redrawBg() {
+            bgCtx.fillStyle = '#ffffff';
+            bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+            if (loadedImg) {
+                imgScale = parseFloat(document.getElementById('img-scale').value);
+                const dw = loadedImg.width * imgScale * DPR;
+                const dh = loadedImg.height * imgScale * DPR;
+                bgCtx.drawImage(loadedImg, imgX * DPR, imgY * DPR, dw, dh);
+            }
+        }
+
+        // 頁面載入時初始化
+        setTimeout(resizeCanvas, 100);
 
         function getPos(e) {
             const rect = canvas.getBoundingClientRect();
             const evt = e.touches ? e.touches[0] : e;
-            return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+            return { x: (evt.clientX - rect.left), y: (evt.clientY - rect.top) };
         }
 
-        const startDraw = (e) => {
+        const startAction = (e) => {
             isDrawing = true;
-            const pos = getPos(e);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            ctx.lineWidth = size;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = (tool === 'eraser') ? '#ffffff' : color;
+            lastPos = getPos(e);
+            
+            if (tool !== 'move') {
+                ctx.beginPath();
+                ctx.moveTo(lastPos.x * DPR, lastPos.y * DPR);
+                ctx.lineWidth = size * DPR; // 筆刷隨解析度放大
+                
+                // 真正的橡皮擦：把筆跡變成透明，露出底下的圖片！
+                if (tool === 'eraser') {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.strokeStyle = 'rgba(0,0,0,1)';
+                } else {
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.strokeStyle = color;
+                }
+            }
         };
 
-        const draw = (e) => {
+        const moveAction = (e) => {
             if (!isDrawing) return;
             e.preventDefault(); 
             const pos = getPos(e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
+            
+            if (tool === 'move') {
+                imgX += (pos.x - lastPos.x);
+                imgY += (pos.y - lastPos.y);
+                lastPos = pos;
+                redrawBg(); // 即時拖曳更新
+            } else {
+                ctx.lineTo(pos.x * DPR, pos.y * DPR);
+                ctx.stroke();
+            }
         };
 
-        const stopDraw = () => { isDrawing = false; };
+        const stopAction = () => { isDrawing = false; };
 
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDraw);
-        canvas.addEventListener('touchstart', startDraw, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDraw);
+        canvas.addEventListener('mousedown', startAction);
+        canvas.addEventListener('mousemove', moveAction);
+        window.addEventListener('mouseup', stopAction);
+        canvas.addEventListener('touchstart', startAction, { passive: false });
+        canvas.addEventListener('touchmove', moveAction, { passive: false });
+        window.addEventListener('touchend', stopAction);
 
         function setTool(selectedTool) {
             tool = selectedTool;
-            document.getElementById('btn-pen').classList.remove('active');
-            document.getElementById('btn-eraser').classList.remove('active');
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-${selectedTool}`).classList.add('active');
+            
+            // 只有選擇移動工具時才顯示縮放拉桿
+            document.getElementById('img-scale').style.display = (tool === 'move') ? 'inline-block' : 'none';
         }
         function setColor(val) { color = val; setTool('pen'); }
         function setSize(val) { size = val; }
         
-        /* 💡 修正 2：獨立出純粹的「白紙覆蓋」功能，不呼叫 resizeCanvas 避免把墨水存起來 */
-        function clearCanvas() { 
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height); 
-        }
+        // 清空現在只清除「透明手寫層」，不影響底圖！
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
         function loadImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
-                        const centerShift_x = (canvas.width - img.width * ratio) / 2;
-                        const centerShift_y = (canvas.height - img.height * ratio) / 2; 
-                        ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
-                    }
-                    img.src = e.target.result;
+                reader.onload = e => {
+                    loadedImg = new Image();
+                    loadedImg.onload = () => {
+                        const rect = wrapper.getBoundingClientRect();
+                        const ratio = Math.min(rect.width / loadedImg.width, rect.height / loadedImg.height);
+                        document.getElementById('img-scale').value = ratio;
+                        imgScale = ratio;
+                        imgX = (rect.width - loadedImg.width * ratio) / 2;
+                        imgY = (rect.height - loadedImg.height * ratio) / 2;
+                        redrawBg();
+                        setTool('move'); // 載入後自動切換到移動模式
+                    };
+                    loadedImg.src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
             input.value = ""; 
         }
 
-        let mediaRecorder;
-        let audioChunks = [];
-        let finalAudioBase64 = null;
-        let isRecording = false;
+        let mediaRecorder, audioChunks = [], finalAudioBase64 = null, isRecording = false;
 
         async function toggleRecording() {
             const btn = document.getElementById('btn-record');
@@ -205,18 +258,15 @@
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                     mediaRecorder = new MediaRecorder(stream);
-                    
                     mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
                     
                     mediaRecorder.onstop = () => {
                         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                         audioChunks = [];
-                        
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = () => {
                             finalAudioBase64 = reader.result;
-                            /* 💡 修正 3：載入 Base64 後強制 reload，並解決 Flex 排版跑版 */
                             preview.src = finalAudioBase64;
                             preview.style.display = 'block';
                             preview.load(); 
@@ -232,9 +282,7 @@
                     statusText.textContent = '🔴 錄音中...';
                     preview.style.display = 'none';
                     finalAudioBase64 = null;
-                } catch (err) {
-                    alert('無法存取麥克風，請檢查裝置權限設定。');
-                }
+                } catch (err) { alert('無法存取麥克風，請檢查裝置權限設定。'); }
             } else {
                 mediaRecorder.stop();
                 isRecording = false;
@@ -252,7 +300,15 @@
             btn.textContent = '📤 傳送中...';
             btn.disabled = true;
 
-            const imageBase64 = canvas.toDataURL('image/jpeg', 0.8); 
+            // 🌟 匯出時：將底圖層與手寫層合併，保持超高解析度
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = bgCanvas.width;
+            exportCanvas.height = bgCanvas.height;
+            const eCtx = exportCanvas.getContext('2d');
+            eCtx.drawImage(bgCanvas, 0, 0);
+            eCtx.drawImage(canvas, 0, 0);
+
+            const imageBase64 = exportCanvas.toDataURL('image/jpeg', 0.85); 
             conn.send({ type: 'submit_homework', author: name, image: imageBase64, audio: finalAudioBase64 });
 
             setTimeout(() => {

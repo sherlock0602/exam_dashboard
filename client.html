@@ -11,34 +11,36 @@
             --success: #00b894; --danger: #d63031; --text: #2d3436;
         }
         * { box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
-        body { background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { background: var(--bg); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        .container { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 15px; }
+        /* 💡 修正 1：加大容器寬度，讓計算空間更大 */
+        .container { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); width: 100%; max-width: 95%; display: flex; flex-direction: column; gap: 12px; }
         
-        h2 { margin: 0; text-align: center; color: var(--text); font-weight: 900; }
-        #status { font-size: 0.9rem; color: var(--danger); font-weight: bold; text-align: center; background: #ffeaa7; padding: 5px; border-radius: 5px; }
+        h2 { margin: 0; text-align: center; color: var(--text); font-weight: 900; font-size: 1.3rem; }
+        #status { font-size: 0.85rem; color: var(--danger); font-weight: bold; text-align: center; background: #ffeaa7; padding: 5px; border-radius: 5px; }
         
         input[type="text"] { width: 100%; padding: 12px; border: 2px solid var(--primary); border-radius: 8px; font-size: 1rem; outline: none; }
         input[type="text"]:focus { border-color: var(--primary-dark); }
         
-        /* 畫布與工具列 */
-        .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: #f5f6fa; padding: 10px; border-radius: 8px; }
-        .tool-btn { background: white; border: 2px solid #dfe6e9; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: #f5f6fa; padding: 10px; border-radius: 8px; }
+        .tool-btn { background: white; border: 2px solid #dfe6e9; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.9rem; }
         .tool-btn.active { border-color: var(--primary); color: var(--primary); background: #e3f2fd; }
-        .color-picker { width: 30px; height: 30px; border: none; padding: 0; cursor: pointer; border-radius: 50%; overflow: hidden; }
-        .file-upload { background: #b2bec3; color: white; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; }
+        .color-picker { width: 30px; height: 30px; border: none; padding: 0; cursor: pointer; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+        .file-upload { background: #b2bec3; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold; }
         
-        .canvas-container { position: relative; width: 100%; height: 400px; border: 2px dashed #b2bec3; border-radius: 8px; overflow: hidden; background: white; touch-action: none; }
+        /* 💡 修正 1：高度改為 65vh，確保在平板上有極大的書寫空間 */
+        .canvas-container { position: relative; width: 100%; height: 65vh; min-height: 400px; border: 2px dashed #b2bec3; border-radius: 8px; overflow: hidden; background: white; touch-action: none; }
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; }
         
-        /* 錄音控制區 */
-        .audio-controls { display: flex; align-items: center; gap: 10px; background: #f5f6fa; padding: 10px; border-radius: 8px; }
-        .btn-record { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.3s; }
+        .audio-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: #f5f6fa; padding: 10px; border-radius: 8px; }
+        .btn-record { background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.3s; flex-shrink: 0; }
         .btn-record.recording { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(214, 48, 49, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(214, 48, 49, 0); } 100% { transform: scale(1); } }
-        #audio-preview { display: none; height: 35px; flex: 1; }
+        
+        /* 💡 修正 3：讓音檔預覽播放器在手機/平板上能正確顯示並播放 */
+        #audio-preview { display: none; height: 35px; max-width: 200px; flex: 1; }
 
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 5px; }
         .btn-submit:disabled { background: #b2bec3; cursor: not-allowed; }
         .btn-submit:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-2px); }
     </style>
@@ -51,39 +53,31 @@
         
         <input type="text" id="student-name" placeholder="👤 請輸入您的姓名 (必填)...">
         
-        <!-- 畫布工具列 -->
         <div class="toolbar">
             <button class="tool-btn active" id="btn-pen" onclick="setTool('pen')">🖊️ 畫筆</button>
             <button class="tool-btn" id="btn-eraser" onclick="setTool('eraser')">🧽 橡皮擦</button>
             <input type="color" id="color-picker" class="color-picker" value="#000000" onchange="setColor(this.value)">
-            <input type="range" id="size-slider" min="2" max="30" value="4" onchange="setSize(this.value)">
+            <input type="range" id="size-slider" min="2" max="30" value="4" onchange="setSize(this.value)" style="width: 80px;">
             <label class="file-upload">
-                <input type="file" accept="image/*" style="display:none;" onchange="loadImage(this)">
-                🖼️ 插入底圖
+                <input type="file" accept="image/*" style="display:none;" onchange="loadImage(this)">🖼️ 插入底圖
             </label>
             <button class="tool-btn" onclick="clearCanvas()" style="margin-left:auto; border-color:var(--danger); color:var(--danger);">🗑️ 清空</button>
         </div>
 
-        <!-- 畫布區 -->
         <div class="canvas-container" id="canvas-wrapper">
             <canvas id="board"></canvas>
         </div>
 
-        <!-- 錄音區 -->
         <div class="audio-controls">
             <button class="btn-record" id="btn-record" onclick="toggleRecording()">🎙️ 按住錄音</button>
             <audio id="audio-preview" controls></audio>
             <span id="record-status" style="font-size:0.8rem; color:#636e72;">尚未錄音</span>
         </div>
 
-        <!-- 送出按鈕 -->
         <button id="btn-submit" class="btn-submit" onclick="submitWork()" disabled>🚀 傳送作業給老師</button>
     </div>
 
     <script>
-        // ==========================================
-        // 📡 1. WebRTC (PeerJS) 通訊連線邏輯
-        // ==========================================
         const urlParams = new URLSearchParams(window.location.search);
         const roomId = urlParams.get('roomId');
         let peer = null, conn = null;
@@ -103,40 +97,27 @@
                 });
                 conn.on('close', () => alert('與老師的連線已斷開，請重新整理網頁。'));
             });
-            peer.on('error', (err) => {
-                document.getElementById('status').textContent = '⚠️ 連線失敗，請確認網路狀態。';
-            });
+            peer.on('error', (err) => { document.getElementById('status').textContent = '⚠️ 連線失敗，請確認網路狀態。'; });
         }
 
-        // ==========================================
-        // 🖌️ 2. Canvas 畫布邏輯
-        // ==========================================
         const canvas = document.getElementById('board');
         const ctx = canvas.getContext('2d');
         const wrapper = document.getElementById('canvas-wrapper');
         
         let isDrawing = false, tool = 'pen', color = '#000000', size = 4;
 
-        // 增強版：記住畫布內容的 Resize 功能
         function resizeCanvas() {
-            // 1. 先把當前的畫面存下來
             let savedData = null;
-            if (canvas.width > 0 && canvas.height > 0) {
-                savedData = canvas.toDataURL();
-            }
+            if (canvas.width > 0 && canvas.height > 0) savedData = canvas.toDataURL();
 
-            // 2. 調整畫布大小
             canvas.width = wrapper.clientWidth;
             canvas.height = wrapper.clientHeight;
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 3. 把剛才存下來的畫面畫回去
             if (savedData) {
                 const img = new Image();
-                img.onload = function() {
-                    ctx.drawImage(img, 0, 0);
-                };
+                img.onload = () => { ctx.drawImage(img, 0, 0); };
                 img.src = savedData;
             }
         }
@@ -154,21 +135,15 @@
             const pos = getPos(e);
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
-            
             ctx.lineWidth = size;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            
-            if (tool === 'eraser') {
-                ctx.strokeStyle = '#ffffff';
-            } else {
-                ctx.strokeStyle = color;
-            }
+            ctx.strokeStyle = (tool === 'eraser') ? '#ffffff' : color;
         };
 
         const draw = (e) => {
             if (!isDrawing) return;
-            e.preventDefault(); // 防止手機滑動
+            e.preventDefault(); 
             const pos = getPos(e);
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
@@ -179,12 +154,10 @@
         canvas.addEventListener('mousedown', startDraw);
         canvas.addEventListener('mousemove', draw);
         window.addEventListener('mouseup', stopDraw);
-        
         canvas.addEventListener('touchstart', startDraw, { passive: false });
         canvas.addEventListener('touchmove', draw, { passive: false });
         window.addEventListener('touchend', stopDraw);
 
-        // 工具切換
         function setTool(selectedTool) {
             tool = selectedTool;
             document.getElementById('btn-pen').classList.remove('active');
@@ -193,16 +166,19 @@
         }
         function setColor(val) { color = val; setTool('pen'); }
         function setSize(val) { size = val; }
-        function clearCanvas() { resizeCanvas(); } // 重新填滿白底
+        
+        /* 💡 修正 2：獨立出純粹的「白紙覆蓋」功能，不呼叫 resizeCanvas 避免把墨水存起來 */
+        function clearCanvas() { 
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height); 
+        }
 
-        // 插入圖片 (縮放至畫布大小)
         function loadImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        // 計算等比例縮放
                         const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
                         const centerShift_x = (canvas.width - img.width * ratio) / 2;
                         const centerShift_y = (canvas.height - img.height * ratio) / 2; 
@@ -212,12 +188,9 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
-            input.value = ""; // 清空 input 確保下次能選同一張
+            input.value = ""; 
         }
 
-        // ==========================================
-        // 🎙️ 3. 錄音邏輯 (MediaRecorder)
-        // ==========================================
         let mediaRecorder;
         let audioChunks = [];
         let finalAudioBase64 = null;
@@ -239,16 +212,17 @@
                         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                         audioChunks = [];
                         
-                        // 轉為 Base64 以利傳輸
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = () => {
                             finalAudioBase64 = reader.result;
+                            /* 💡 修正 3：載入 Base64 後強制 reload，並解決 Flex 排版跑版 */
                             preview.src = finalAudioBase64;
                             preview.style.display = 'block';
-                            statusText.textContent = '✅ 錄音完成';
+                            preview.load(); 
+                            statusText.textContent = '✅ 錄音完成 (可試聽)';
                         };
-                        stream.getTracks().forEach(track => track.stop()); // 釋放麥克風
+                        stream.getTracks().forEach(track => track.stop()); 
                     };
 
                     mediaRecorder.start();
@@ -269,9 +243,6 @@
             }
         }
 
-        // ==========================================
-        // 🚀 4. 打包與發送作業
-        // ==========================================
         function submitWork() {
             const name = document.getElementById('student-name').value.trim();
             if (!name) return alert('請務必填寫您的姓名！');
@@ -281,18 +252,8 @@
             btn.textContent = '📤 傳送中...';
             btn.disabled = true;
 
-            // 將畫布轉為 Base64 圖片
-            const imageBase64 = canvas.toDataURL('image/jpeg', 0.8); // 使用 JPEG 稍微壓縮，0.8 畫質
-
-            const dataPackage = {
-                type: 'submit_homework',
-                author: name,
-                image: imageBase64,
-                audio: finalAudioBase64 // 如果沒錄音就是 null
-            };
-
-            // 透過 PeerJS 送出
-            conn.send(dataPackage);
+            const imageBase64 = canvas.toDataURL('image/jpeg', 0.8); 
+            conn.send({ type: 'submit_homework', author: name, image: imageBase64, audio: finalAudioBase64 });
 
             setTimeout(() => {
                 alert('🎉 作業已成功傳送給老師！');

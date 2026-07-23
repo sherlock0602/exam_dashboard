@@ -538,25 +538,20 @@
             
             avatar: { gifs: ['play.gif', 'play2.gif', 'play3.gif'], lastState: null, intervalId: null, timeoutId: null, currentIndex: -1 },
 
-            // 🌟 新增：P2P 作業接收模組
+            // 🌟 P2P 作業接收模組
             p2p: {
                 peer: null,
                 peerId: null,
                 
                 init() {
-                    // 初始化 PeerJS，使用官方免費的雲端握手伺服器
                     this.peer = new Peer();
-                    
                     this.peer.on('open', (id) => {
                         this.peerId = id;
                         document.getElementById('peer-status').textContent = `🟢 P2P 服務已啟動`;
                         this.generateQR(id);
                     });
-
-                    // 監聽來自平板的連線
                     this.peer.on('connection', (conn) => {
                         conn.on('data', (data) => {
-                            // 收到平板上傳的資料包
                             if (data.type === 'submit_homework') {
                                 app.p2p.renderNewHomework(data);
                             }
@@ -565,19 +560,12 @@
                 },
 
                 generateQR(id) {
-                    // 自動抓取當前網頁所在的目錄，並指向 client.html
-                    // 這樣就算您在本地用 Live Server (例如 http://127.0.0.1:5500/) 也會自動對應正確網址！
                     const currentDir = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
                     const clientUrl = `${currentDir}client.html?roomId=${id}`;
-                    
-                    document.getElementById('qrcode-box').innerHTML = ''; // 清空讀取中字樣
+                    document.getElementById('qrcode-box').innerHTML = ''; 
                     new QRCode(document.getElementById('qrcode-box'), {
-                        text: clientUrl,
-                        width: 100,
-                        height: 100,
-                        colorDark : "#000000",
-                        colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.H
+                        text: clientUrl, width: 100, height: 100,
+                        colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
                     });
                 },
 
@@ -588,40 +576,22 @@
                     card.onmouseover = () => { card.style.transform = 'translateY(-3px)'; card.style.borderColor = 'var(--success)'; };
                     card.onmouseout = () => { card.style.transform = 'translateY(0)'; card.style.borderColor = 'var(--accent)'; };
                     
-                    // 畫布縮圖 (點擊可放大檢視，暫時以新分頁開啟)
                     const img = document.createElement('img');
                     img.src = data.image;
                     img.style = "width: 100%; height: 80px; object-fit: contain; border-radius: 5px; background: white; cursor: pointer; border: 1px dashed var(--clock-bg);";
-                    // 增強版：點擊放大檢視 (置中 + 深色背景)
+                    
+                    /* 💡 修正 4：點擊縮圖不再開啟新分頁，而是呼叫底下的動態視窗產生器 */
                     img.onclick = () => {
-                        const w = window.open("");
-                        w.document.write(`
-                            <title>${data.author} 的作業</title>
-                            <body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #1e1e1e; overflow: hidden;">
-                                <img src="${data.image}" style="max-width: 95vw; max-height: 95vh; object-fit: contain; background: white; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                            </body>
-                        `);
+                        app.p2p.openHomeworkViewer(data.author, data.image);
                     };
                     
-                    // 上傳者姓名
                     const name = document.createElement('span');
                     name.style = "font-size: 0.8rem; font-weight: bold; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 100%; margin-top: 5px;";
                     name.textContent = `👤 ${data.author}`;
 
                     card.appendChild(img);
                     card.appendChild(name);
-                    // --- 新增：單獨刪除按鈕 ---
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.innerHTML = '✕';
-                    deleteBtn.style = "position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);";
-                    deleteBtn.onclick = (e) => {
-                        e.stopPropagation(); // 防止點擊到卡片其他功能
-                        card.style.transform = 'scale(0)';
-                        setTimeout(() => card.remove(), 200); // 加上微微的動畫感
-                    };
-                    card.appendChild(deleteBtn);
-                    // ------------------------
-                    // 如果有錄音檔案
+
                     if (data.audio) {
                         const audioBtn = document.createElement('button');
                         audioBtn.innerHTML = "🎵 播放錄音";
@@ -633,13 +603,50 @@
                         card.appendChild(audioBtn);
                     }
 
-                    // 將新作業加在最前面
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.innerHTML = '✕';
+                    deleteBtn.style = "position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);";
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation(); 
+                        card.style.transform = 'scale(0)';
+                        setTimeout(() => card.remove(), 200); 
+                    };
+                    card.appendChild(deleteBtn);
+
                     grid.insertBefore(card, grid.firstChild);
-                    
-                    // 語音提示有人交作業
                     if ('speechSynthesis' in window) {
                         window.speechSynthesis.speak(new SpeechSynthesisUtterance(`收到來自 ${data.author} 的作業`));
                     }
+                },
+
+                /* 💡 修正 4：動態建立一個 OS 視窗來顯示作業，方便搭配全域白板功能 */
+                openHomeworkViewer(author, imgSrc) {
+                    const winId = 'hw-view-' + Date.now();
+                    const win = document.createElement('div');
+                    win.className = 'os-window active';
+                    win.id = winId;
+                    // 預設開在一個夠大的尺寸，方便教學
+                    win.style.width = '700px';
+                    win.style.height = '500px';
+                    win.style.top = '10vh';
+                    win.style.left = '10vw';
+                    win.style.zIndex = ++app.data.zIndexCounter;
+
+                    win.innerHTML = `
+                        <div class="window-header drag-handle">
+                            <span class="window-title">📝 ${escapeHTML(author)} 的作業</span>
+                            <div class="header-actions">
+                                <button class="btn-zoom" onclick="document.getElementById('${winId}').remove()" title="關閉">✕</button>
+                            </div>
+                        </div>
+                        <div class="window-content" style="padding: 0; display: flex; justify-content: center; align-items: center; background: #fff; overflow: auto;">
+                            <img src="${imgSrc}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="resize-handle"></div>
+                    `;
+                    document.getElementById('desktop').appendChild(win);
+                    app.makeWindowInteractive(win);
+                    app.saveWindowStates();
                 }
             },
 

@@ -595,7 +595,8 @@
                         btn.className = 'bookmark-item';
                         btn.innerHTML = `<span>🌍</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHTML(bm.title)}</span>`;
                         btn.onclick = () => {
-                            app.openIframeApp('win-' + bm.id, bm.title, '🌍', bm.url, 800, 600);
+                            // 最後面加上 false，指示不要在 Dock 產生新按鈕
+                            app.openIframeApp('win-' + bm.id, bm.title, '🌍', bm.url, 800, 600, false);
                             menu.classList.remove('active');
                             setTimeout(() => { menu.style.display = 'none'; }, 300);
                         };
@@ -932,9 +933,15 @@
                 win.addEventListener('touchstart', () => { win.style.zIndex = ++this.data.zIndexCounter; this.saveWindowStates(); }, {passive: true});
             },
 
-            openIframeApp(id, title, icon, url, defaultWidth = 450, defaultHeight = 400) {
+            // 增加 showInDock 參數，預設為 true
+            openIframeApp(id, title, icon, url, defaultWidth = 450, defaultHeight = 400, showInDock = true) {
                 if (document.getElementById(id)) {
-                    this.toggleWindow(id);
+                    // 如果視窗已存在但被隱藏，則叫出來；若已顯示，則拉到最上層
+                    if (!document.getElementById(id).classList.contains('active')) {
+                        this.toggleWindow(id);
+                    } else {
+                        document.getElementById(id).style.zIndex = ++this.data.zIndexCounter;
+                    }
                     return;
                 }
                 
@@ -962,16 +969,19 @@
                 document.getElementById('desktop').appendChild(win);
                 this.makeWindowInteractive(win);
                 
-                let btn = document.querySelector(`.dock-btn[data-target="${id}"]`);
-                if (!btn) {
-                    btn = document.createElement('button');
-                    btn.className = 'dock-btn is-open';
-                    btn.setAttribute('data-target', id);
-                    btn.onclick = () => this.toggleWindow(id);
-                    btn.title = title;
-                    btn.innerHTML = icon;
-                    const dock = document.getElementById('main-dock');
-                    dock.insertBefore(btn, dock.children[dock.children.length - 3]); 
+                // 只有在 showInDock 為 true 時，才建立下方 Dock 按鈕
+                if (showInDock) {
+                    let btn = document.querySelector(`.dock-btn[data-target="${id}"]`);
+                    if (!btn) {
+                        btn = document.createElement('button');
+                        btn.className = 'dock-btn is-open';
+                        btn.setAttribute('data-target', id);
+                        btn.onclick = () => this.toggleWindow(id);
+                        btn.title = title;
+                        btn.innerHTML = icon;
+                        const dock = document.getElementById('main-dock');
+                        dock.insertBefore(btn, dock.children[dock.children.length - 3]); 
+                    }
                 }
                 
                 this.saveWindowStates();

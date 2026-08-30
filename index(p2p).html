@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌱 聽憑風引 OS</title>
-    <!-- 🌟 新增：引入 QR Code 產生器與 PeerJS (WebRTC) 庫 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
@@ -228,31 +227,44 @@
         #drawing-toolbar {
             position: fixed; bottom: -150px; left: 50%; transform: translateX(-50%);
             background: var(--panel-bg); border: 2px solid var(--accent); border-radius: 12px;
-            /* 💡 將原本的 padding 與 gap 縮小 */
             padding: 6px 15px; display: flex; gap: 12px; z-index: 90001;
             box-shadow: 0 5px 20px rgba(0,0,0,0.25); backdrop-filter: blur(10px);
             align-items: center; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* 💡 縮小後，讓它在開啟時更貼近底部一點 */
         body.drawing-mode #drawing-toolbar { bottom: 20px; }
 
-        /* 💡 縮小各群組之間的間距 */
         .toolbar-group { display: flex; align-items: center; gap: 8px; border-right: 2px solid var(--clock-bg); padding-right: 12px; }
         .toolbar-group:last-child { border-right: none; padding-right: 0; }
         
-        /* 💡 縮小工具按鈕的內距與字體大小 (1.5rem -> 1.1rem) */
         .tool-btn { background: transparent; border: 2px solid transparent; border-radius: 6px; padding: 4px 8px; font-size: 1.1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; color: var(--text-main); }
         .tool-btn:hover { background: var(--clock-bg); transform: translateY(-2px); }
         .tool-btn.active { background: var(--accent); border-color: var(--accent-shadow); box-shadow: 0 3px 8px var(--accent-shadow); color: white; }
 
-        /* 💡 縮小調色盤的圓圈大小 (28px -> 20px) */
         .color-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .color-btn:hover { transform: scale(1.2); }
         .color-btn.active { border-color: var(--text-main); transform: scale(1.2); }
         
-        /* 💡 縮短畫筆粗細拉桿的長度 */
         #brush-slider { width: 70px; cursor: pointer; accent-color: var(--accent); }
+
+        /* ==========================================
+           🌍 8. 書籤選單樣式
+           ========================================== */
+        .bookmark-menu {
+            position: absolute; top: 70px; background: var(--panel-bg);
+            border: 2px solid var(--accent); border-radius: 12px;
+            padding: 10px; display: none; flex-direction: column; gap: 5px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2); backdrop-filter: blur(12px); z-index: 10005;
+            min-width: 180px; transform: translateY(-10px); opacity: 0; transition: 0.3s ease;
+        }
+        .bookmark-menu.active {
+            display: flex; transform: translateY(0); opacity: 1;
+        }
+        .bookmark-item {
+            padding: 10px 15px; border-radius: 8px; cursor: pointer; color: var(--text-main); font-weight: bold; transition: 0.2s;
+            display: flex; align-items: center; gap: 10px; font-size: 0.95rem;
+        }
+        .bookmark-item:hover { background: var(--clock-bg); color: var(--accent); transform: translateX(5px); }
     </style>
 </head>
 <body>
@@ -271,23 +283,24 @@
             <button class="dock-btn" data-target="win-calc" onclick="app.toggleWindow('win-calc')" title="智慧計算機">🔢</button>
             <button class="dock-btn" id="btn-draw" onclick="app.drawingBoard.toggle()" title="畫布模式 (教學寫字板)">🖌️</button>
             
-            <!-- 🌟 新增：作業接收中心的 Dock 按鈕 -->
             <button class="dock-btn" data-target="win-homework" onclick="app.toggleWindow('win-homework')" title="作業接收中心">📡</button>
-
             <button class="dock-btn" data-target="win-lottery" onclick="app.openIframeApp('win-lottery', 'AR 抽籤', '🎯', 'https://sherlock0602.github.io/ar-lottery/shooter04.html', 640, 480)" title="AR 隨機抽籤">🎯</button>
-            <button class="dock-btn" data-target="win-wiki" onclick="app.openIframeApp('win-wiki', '維基百科', '🌍', 'https://zh.wikipedia.org/')" title="開啟外部網頁範例">🌍</button>
+            
+            <button class="dock-btn" id="btn-bookmarks" onclick="app.bookmarks.toggleMenu(event)" title="外部網頁書籤">🌍</button>
+            
             <button class="dock-btn" onclick="app.toggleWeather()" title="天氣切換">🌧️</button>
             <button class="dock-btn" onclick="app.toggleTheme()" title="主題切換">🎨</button>
             <button class="dock-btn" onclick="app.openSettings()" title="系統設定">⚙️</button>
         </div>
     </div>
+    
+    <div id="bookmark-menu" class="bookmark-menu"></div>
 
     <div id="desktop">
         <canvas id="drawing-canvas"></canvas>
         <div id="weather-layer"></div>
         <audio id="rain-audio" loop src="https://actions.google.com/sounds/v1/weather/heavy_rain.ogg"></audio>
 
-        <!-- 🌟 新增：學生作業接收中心視窗 -->
         <div class="os-window" id="win-homework" style="width: 500px; height: 450px; top: 100px; left: 100px;">
             <div class="window-header drag-handle">
                 <span class="window-title">📡 學生作業接收中心</span>
@@ -297,7 +310,6 @@
             </div>
             <div class="window-content" style="display: flex; flex-direction: column; gap: 15px;">
                 <div style="display: flex; gap: 15px; align-items: center; background: var(--clock-bg); padding: 10px; border-radius: 12px;">
-                    <!-- QR Code 放置處 -->
                     <div id="qrcode-box" style="background: white; padding: 5px; border-radius: 5px; width: 110px; height: 110px; display: flex; justify-content: center; align-items: center; text-align: center; font-size: 0.8rem; color: #999;">讀取中</div>
                     <div style="font-size: 0.9rem; flex: 1;">
                         <p style="font-weight: bold; color: var(--accent);">📱 學生請掃描左側 QR Code</p>
@@ -306,14 +318,11 @@
                     </div>
                 </div>
                 
-                <!-- 作業縮圖牆 -->
-                <!-- 增強版：作業縮圖牆標題與一鍵刪除 -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 0;">
                     <h4 style="color: var(--accent); margin: 0;">📥 繳交列表</h4>
                     <button onclick="document.getElementById('homework-grid').innerHTML = ''" style="background: var(--danger); color: white; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">🗑️ 全部清除</button>
                 </div>
                 <div id="homework-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; overflow-y: auto; flex: 1; padding-bottom: 10px;">
-                    <!-- 繳交的作業會動態塞在這裡 -->
                 </div>
             </div>
             <div class="resize-handle"></div>
@@ -455,13 +464,11 @@
         </div>
     </div>
     
-    <!-- 畫筆專屬工具列 (緊湊版) -->
     <div id="drawing-toolbar">
         <div class="toolbar-group">
             <button class="tool-btn active" data-tool="pen" onclick="app.drawingBoard.setTool('pen')" title="一般畫筆">🖊️</button>
             <button class="tool-btn" data-tool="highlighter" onclick="app.drawingBoard.setTool('highlighter')" title="半透明螢光筆">🖍️</button>
             <button class="tool-btn" data-tool="eraser" onclick="app.drawingBoard.setTool('eraser')" title="橡皮擦">
-                <!-- 💡 這裡將 SVG 的 width 和 height 從 24 改成了 18 -->
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
             </button>
         </div>
@@ -474,7 +481,6 @@
             <button class="color-btn" style="background: #000000;" onclick="app.drawingBoard.setColor('#000000')" title="黑色"></button>
         </div>
         <div class="toolbar-group">
-            <!-- 💡 將尺 Emoji 的字體從 1.2rem 縮小到 1rem -->
             <span style="font-size: 1rem; cursor: help;" title="畫筆粗細">📏</span>
             <input type="range" id="brush-slider" min="2" max="50" value="4" onchange="app.drawingBoard.setSize(this.value)" title="滑動調整粗細">
         </div>
@@ -483,7 +489,6 @@
         </div>
     </div>
 
-    <!-- 設定控制中心 -->
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 style="color: var(--accent); margin-bottom: 15px; text-align: center; font-weight: 900; letter-spacing: 2px;">⚙️ 系統設定中心</h3>
@@ -491,7 +496,7 @@
             <div class="tabs-container">
                 <button id="btn-tab-misc" class="tab-btn active" onclick="app.switchTab('misc')">一般設定</button>
                 <button id="btn-tab-periods" class="tab-btn" onclick="app.switchTab('periods')">節次時間</button>
-            </div>
+                <button id="btn-tab-bookmarks" class="tab-btn" onclick="app.switchTab('bookmarks')">網頁書籤</button> </div>
             
             <div id="tab-misc" class="tab-pane active">
                 <div class="setting-row">
@@ -506,6 +511,16 @@
 
             <div id="tab-periods" class="tab-pane">
                 <div id="period-settings-container"></div>
+            </div>
+            
+            <div id="tab-bookmarks" class="tab-pane">
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <input type="text" id="new-bm-title" placeholder="網站名稱 (例: 均一)" style="width: 35%; padding: 8px 10px; border-radius: 8px; border: 2px solid var(--clock-bg); background: var(--panel-bg); color: var(--text-main); font-size: 14px; outline: none;">
+                    <input type="text" id="new-bm-url" placeholder="https://..." style="flex: 1; padding: 8px 10px; border-radius: 8px; border: 2px solid var(--clock-bg); background: var(--panel-bg); color: var(--text-main); font-size: 14px; outline: none;">
+                    <button onclick="app.bookmarks.add()" style="padding: 8px 15px; border-radius: 8px; background: var(--accent); color: #fff; font-weight: bold; cursor: pointer; border: none; white-space: nowrap; font-size: 14px;">新增</button>
+                </div>
+                <div id="bookmark-settings-list" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; max-height: 250px; padding-right: 5px;">
+                    </div>
             </div>
 
             <div style="margin-top: 20px; display: flex; justify-content: space-between;">
@@ -540,12 +555,95 @@
                 
                 audioContext: null,
                 analyser: null,
-                visualizerData: null
+                visualizerData: null,
+                
+                // 🌟 新增：書籤清單資料陣列
+                bookmarks: JSON.parse(localStorage.getItem('bookmarks')) || [
+                    { id: 'bm-wiki', title: '維基百科', url: 'https://zh.wikipedia.org/' }
+                ]
             },
             
             avatar: { gifs: ['play.gif', 'play2.gif', 'play3.gif'], lastState: null, intervalId: null, timeoutId: null, currentIndex: -1 },
 
-            // 🌟 P2P 作業接收模組
+            // 🌟 新增：書籤控制模組
+            bookmarks: {
+                toggleMenu(e) {
+                    const menu = document.getElementById('bookmark-menu');
+                    if (menu.classList.contains('active')) {
+                        menu.classList.remove('active');
+                        setTimeout(() => { if(!menu.classList.contains('active')) menu.style.display = 'none'; }, 300);
+                    } else {
+                        this.renderMenu();
+                        menu.style.display = 'flex';
+                        void menu.offsetWidth; 
+                        menu.classList.add('active');
+                        
+                        const rect = e.target.getBoundingClientRect();
+                        menu.style.left = rect.left + 'px';
+                    }
+                    e.stopPropagation(); 
+                },
+                renderMenu() {
+                    const menu = document.getElementById('bookmark-menu');
+                    menu.innerHTML = '';
+                    if (app.data.bookmarks.length === 0) {
+                        menu.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 10px;">請至設定新增網址</div>';
+                        return;
+                    }
+                    app.data.bookmarks.forEach(bm => {
+                        const btn = document.createElement('div');
+                        btn.className = 'bookmark-item';
+                        btn.innerHTML = `<span>🌍</span> <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHTML(bm.title)}</span>`;
+                        btn.onclick = () => {
+                            app.openIframeApp('win-' + bm.id, bm.title, '🌍', bm.url, 800, 600);
+                            menu.classList.remove('active');
+                            setTimeout(() => { menu.style.display = 'none'; }, 300);
+                        };
+                        menu.appendChild(btn);
+                    });
+                },
+                renderSettings() {
+                    const list = document.getElementById('bookmark-settings-list');
+                    list.innerHTML = '';
+                    app.data.bookmarks.forEach(bm => {
+                        const row = document.createElement('div');
+                        row.className = 'setting-row';
+                        row.style.background = 'var(--clock-bg)';
+                        row.style.borderRadius = '10px';
+                        row.style.padding = '10px 15px';
+                        row.innerHTML = `
+                            <div style="display: flex; flex-direction: column; overflow: hidden; max-width: 80%;">
+                                <span style="font-weight: bold; color: var(--accent);">${escapeHTML(bm.title)}</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHTML(bm.url)}</span>
+                            </div>
+                            <button class="btn-delete" onclick="app.bookmarks.remove('${bm.id}')">✕</button>
+                        `;
+                        list.appendChild(row);
+                    });
+                },
+                add() {
+                    const title = document.getElementById('new-bm-title').value.trim();
+                    let url = document.getElementById('new-bm-url').value.trim();
+                    if(!title || !url) return alert('網站名稱與網址都要填寫喔！');
+                    
+                    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+                    
+                    app.data.bookmarks.push({ id: 'bm-' + Date.now(), title, url });
+                    this.save();
+                    this.renderSettings();
+                    document.getElementById('new-bm-title').value = '';
+                    document.getElementById('new-bm-url').value = '';
+                },
+                remove(id) {
+                    app.data.bookmarks = app.data.bookmarks.filter(bm => bm.id !== id);
+                    this.save();
+                    this.renderSettings();
+                },
+                save() {
+                    localStorage.setItem('bookmarks', JSON.stringify(app.data.bookmarks));
+                }
+            },
+
             p2p: {
                 peer: null,
                 peerId: null,
@@ -577,7 +675,6 @@
                         colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H
                     });
 
-                    // 💡 修正 3：點擊 QR Code 產生全螢幕放大版
                     qrBox.style.cursor = 'pointer';
                     qrBox.title = '點擊放大 QR Code';
                     qrBox.onclick = () => {
@@ -610,7 +707,6 @@
                     img.src = data.image;
                     img.style = "width: 100%; height: 80px; object-fit: contain; border-radius: 5px; background: white; cursor: pointer; border: 1px dashed var(--clock-bg);";
                     
-                    // 已經實作過的：點擊在終端開啟動態視窗教學
                     img.onclick = () => { app.p2p.openHomeworkViewer(data.author, data.image); };
                     
                     const name = document.createElement('span');
@@ -625,7 +721,6 @@
                         audioBtn.innerHTML = "🎵 播放錄音";
                         audioBtn.style = "font-size: 0.75rem; padding: 5px 8px; border-radius: 5px; border: none; background: var(--accent); color: white; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold;";
                         
-                        // 💡 修正 1：加入播放與暫停的切換邏輯
                         const audio = new Audio(data.audio);
                         audioBtn.onclick = () => {
                             if (audio.paused) {
@@ -723,6 +818,16 @@
                 document.addEventListener('touchstart', closeTopBarIfOutside, {passive: true});
                 document.addEventListener('mousedown', closeTopBarIfOutside);
 
+                // 🌟 新增：點擊外部自動關閉書籤選單
+                document.addEventListener('click', (e) => {
+                    const menu = document.getElementById('bookmark-menu');
+                    const btn = document.getElementById('btn-bookmarks');
+                    if (menu && menu.classList.contains('active') && !menu.contains(e.target) && e.target !== btn) {
+                        menu.classList.remove('active');
+                        setTimeout(() => { if(!menu.classList.contains('active')) menu.style.display = 'none'; }, 300);
+                    }
+                });
+
                 this.loadWindowStates();
                 this.initAllInteractiveWindows();
                 this.loadSettings();
@@ -732,7 +837,6 @@
                 this.preloadGif();
                 this.updateDockIndicators();
                 
-                // 🌟 新增：初始化 P2P 服務
                 this.p2p.init();
                 
                 setInterval(() => this.tick(), 100);
@@ -921,7 +1025,7 @@
                 tool: 'pen',
                 color: '#ff003c',
                 size: 4,
-                snapshot: null, // 用來存取下筆前的畫面狀態，解決疊加與鋸齒問題
+                snapshot: null,
                 
                 init() {
                     const canvas = document.getElementById('drawing-canvas');
@@ -934,7 +1038,6 @@
                         this.isDrawing = true;
                         const pos = this.getPos(e);
                         this.points = [pos];
-                        // 每次下筆瞬間，拍一張當前畫布的「快照」
                         this.snapshot = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
                         this.applyBrushSettings();
                     };
@@ -944,7 +1047,6 @@
                         e.preventDefault(); 
                         this.points.push(this.getPos(e));
 
-                        // 每次移動時，先還原快照，再把「整條線」重畫一次 (完美解決螢光筆重疊變暗的問題)
                         this.ctx.putImageData(this.snapshot, 0, 0);
                         
                         this.ctx.beginPath();
@@ -953,7 +1055,6 @@
                         if (this.points.length < 3) {
                             this.ctx.lineTo(this.points[0].x, this.points[0].y);
                         } else {
-                            // 使用動態貝茲曲線演算法，讓所有折角變得超級絲滑
                             for (let i = 1; i < this.points.length - 1; i++) {
                                 const curr = this.points[i];
                                 const next = this.points[i + 1];
@@ -1029,7 +1130,6 @@
                     document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
                     document.querySelector(`.tool-btn[data-tool="${type}"]`).classList.add('active');
                     
-                    // 自動調整適合該工具的粗細
                     if(type === 'highlighter' && this.size < 15) {
                         this.setSize(24); document.getElementById('brush-slider').value = 24;
                     } else if (type === 'pen' && this.size > 10) {
@@ -1476,6 +1576,9 @@
                 
                 document.getElementById('toggle-small-ui').checked = this.data.isSmallUI;
                 document.getElementById('toggle-autohide').checked = this.data.autoHideTopBar;
+
+                // 🌟 確保打開設定時載入書籤清單
+                app.bookmarks.renderSettings();
 
                 this.switchTab('misc');
                 document.getElementById('settings-modal').style.display = 'flex'; 

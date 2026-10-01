@@ -885,7 +885,7 @@
                     const card = document.createElement('div');
                     
                     // 🌟 修改：加入 justify-content: space-between; 與 height: 100%; 來解決空白問題
-                    card.style = "background: var(--panel-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; gap: 5px; align-items: center; position: relative; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); height: 100%;";
+                    card.style = "background: var(--panel-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 5px; align-items: center; position: relative; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); align-self: start;";
                     card.onmouseover = () => { card.style.transform = 'translateY(-3px)'; card.style.borderColor = 'var(--success)'; };
                     card.onmouseout = () => { card.style.transform = 'translateY(0)'; card.style.borderColor = 'var(--accent)'; };
                     
@@ -908,7 +908,7 @@
 
                     // --- 🌟 將按鈕包成一塊，靠底對齊 ---
                     const actionContainer = document.createElement('div');
-                    actionContainer.style = "display: flex; flex-direction: column; gap: 5px; width: 100%; margin-top: auto;";
+actionContainer.style = "display: flex; flex-direction: column; gap: 5px; width: 100%; margin-top: 5px;";
 
                     // 第 1 排按鈕：播放音訊 (只有在有錄音時才建立)
                     if (data.audio) {

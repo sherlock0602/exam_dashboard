@@ -296,14 +296,11 @@
             <button class="dock-btn" data-target="win-notes" onclick="app.toggleWindow('win-notes')" title="提醒筆記">📌</button>
             <button class="dock-btn" data-target="win-audio" onclick="app.toggleWindow('win-audio')" title="音樂播放器">🎵</button>
             <button class="dock-btn" data-target="win-calc" onclick="app.toggleWindow('win-calc')" title="智慧計算機">🔢</button>
-            <button class="dock-btn" id="btn-draw" onclick="app.drawingBoard.toggle()" title="畫布模式 (教學寫字板)">🖌️</button>
+            <button class="dock-btn" id="btn-draw" onclick="app.drawingBoard.toggle()" title="畫布模式 (教學寫字板)">🖌️️</button>
             
             <button class="dock-btn" data-target="win-homework" onclick="app.toggleWindow('win-homework')" title="作業接收中心">📡</button>
             <button class="dock-btn" data-target="win-lottery" onclick="app.openIframeApp('win-lottery', 'AR 抽籤', '🎯', 'https://sherlock0602.github.io/ar-lottery/index-new-v01.html', 640, 480)" title="AR 隨機抽籤">🎯</button>
-            
-            <!-- 🌟 捨棄 iframe，改成觸發原生視窗 -->
             <button class="dock-btn" data-target="win-sonichud" onclick="app.toggleWindow('win-sonichud')" title="智慧分貝監控">🔊</button>
-            
             <button class="dock-btn" id="btn-bookmarks" onclick="app.bookmarks.toggleMenu(event)" title="外部網頁書籤">🌍</button>
             
             <button class="dock-btn" onclick="app.toggleWeather()" title="天氣切換">🌧️</button>
@@ -319,7 +316,6 @@
         <div id="weather-layer"></div>
         <audio id="rain-audio" loop src="https://actions.google.com/sounds/v1/weather/heavy_rain.ogg"></audio>
 
-        <!-- 🌟 新增：原生可愛版分貝監控視窗 -->
         <div class="os-window" id="win-sonichud" style="width: 320px; height: 500px; top: 100px; left: 100px;">
             <div class="window-header drag-handle">
                 <span class="window-title">🔊 智慧分貝監控</span>
@@ -328,23 +324,14 @@
                 </div>
             </div>
             <div class="window-content" style="align-items: center; justify-content: center; overflow-x: hidden;">
-                <!-- 啟動按鈕 -->
                 <button id="sonic-start-btn" class="sonic-btn-start" onclick="app.sonicHUD.start()">🎙️ 點擊授權麥克風</button>
-                
-                <!-- 監控面板 (預設隱藏，啟動後顯示) -->
                 <div id="sonic-ui" style="display: none; width: 100%; flex-direction: column; align-items: center; gap: 15px;">
-                    
                     <div class="sonic-display" id="sonic-circle">
                         <div class="sonic-db" id="sonic-db-val">0</div>
                         <div class="sonic-unit">dB</div>
                     </div>
-                    
                     <div class="sonic-status" id="sonic-status-txt">🟢 系統監聽中</div>
-                    
-                    <div class="sonic-bar-bg">
-                        <div class="sonic-bar" id="sonic-progress"></div>
-                    </div>
-
+                    <div class="sonic-bar-bg"><div class="sonic-bar" id="sonic-progress"></div></div>
                     <div class="sonic-settings">
                         <div style="font-weight: 900; color: var(--accent); margin-bottom: 2px;">⚙️ 監控參數調整</div>
                         <div style="display: flex; align-items: center; gap: 10px;">
@@ -361,7 +348,6 @@
                             <input type="range" id="sonic-th-slider" min="60" max="110" step="1" value="85" oninput="app.sonicHUD.updateSettings()">
                         </div>
                     </div>
-
                     <div class="sonic-counter-box" id="sonic-counter-area" style="display: none;">
                         <div>
                             <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold;">🚨 吵鬧警告次數</div>
@@ -373,7 +359,6 @@
             </div>
             <div class="resize-handle"></div>
         </div>
-        <!-- 🌟 原生可愛版分貝監控視窗結束 -->
 
         <div class="os-window" id="win-homework" style="width: 500px; height: 450px; top: 100px; left: 100px;">
             <div class="window-header drag-handle">
@@ -638,7 +623,6 @@
             
             avatar: { gifs: ['play.gif', 'play2.gif', 'play3.gif'], lastState: null, intervalId: null, timeoutId: null, currentIndex: -1 },
 
-            // 🌟 新增：分貝計核心邏輯
             sonicHUD: {
                 audioCtx: null,
                 analyser: null,
@@ -651,11 +635,11 @@
                 count: 0,
                 isViolating: false,
                 reqId: null,
-                stream: null, // 🌟 新增：用來記錄麥克風的串流，以便後續關閉
+                stream: null, 
 
                 start() {
                     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                        this.stream = stream; // 🌟 記錄下來
+                        this.stream = stream; 
                         document.getElementById('sonic-start-btn').style.display = 'none';
                         document.getElementById('sonic-ui').style.display = 'flex';
                         
@@ -675,21 +659,19 @@
                     });
                 },
 
-                // 🌟 新增：停止監聽與釋放麥克風資源
                 stop() {
                     this.isRunning = false;
-                    if (this.reqId) cancelAnimationFrame(this.reqId); // 停止運算迴圈
+                    if (this.reqId) cancelAnimationFrame(this.reqId); 
                     
                     if (this.stream) {
-                        this.stream.getTracks().forEach(track => track.stop()); // 關閉麥克風硬體指示燈
+                        this.stream.getTracks().forEach(track => track.stop()); 
                         this.stream = null;
                     }
                     if (this.audioCtx) {
-                        this.audioCtx.close(); // 釋放音訊處理器
+                        this.audioCtx.close(); 
                         this.audioCtx = null;
                     }
 
-                    // 恢復初始 UI 狀態
                     document.getElementById('sonic-start-btn').style.display = 'block';
                     document.getElementById('sonic-ui').style.display = 'none';
                     this.updateUI(0); 
@@ -901,98 +883,109 @@
                 renderNewHomework(data) {
                     const grid = document.getElementById('homework-grid');
                     const card = document.createElement('div');
-                    card.style = "background: var(--panel-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 5px; align-items: center; position: relative; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1);";
+                    
+                    // 🌟 修改：加入 justify-content: space-between; 與 height: 100%; 來解決空白問題
+                    card.style = "background: var(--panel-bg); border: 2px solid var(--accent); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; justify-content: space-between; gap: 5px; align-items: center; position: relative; transition: 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.1); height: 100%;";
                     card.onmouseover = () => { card.style.transform = 'translateY(-3px)'; card.style.borderColor = 'var(--success)'; };
                     card.onmouseout = () => { card.style.transform = 'translateY(0)'; card.style.borderColor = 'var(--accent)'; };
                     
+                    // --- 將圖片與姓名包成一塊，靠上對齊 ---
+                    const topSection = document.createElement('div');
+                    topSection.style = "display: flex; flex-direction: column; align-items: center; width: 100%; cursor: pointer;";
+                    topSection.onclick = () => { app.p2p.openHomeworkViewer(data.author, data.image); };
+
                     const img = document.createElement('img');
                     img.src = data.image;
-                    img.style = "width: 100%; height: 80px; object-fit: contain; border-radius: 5px; background: white; cursor: pointer; border: 1px dashed var(--clock-bg);";
-                    
-                    img.onclick = () => { app.p2p.openHomeworkViewer(data.author, data.image); };
+                    img.style = "width: 100%; height: 80px; object-fit: contain; border-radius: 5px; background: white; border: 1px dashed var(--clock-bg);";
                     
                     const name = document.createElement('span');
                     name.style = "font-size: 0.8rem; font-weight: bold; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 100%; margin-top: 5px;";
                     name.textContent = `👤 ${data.author}`;
 
-                    card.appendChild(img);
-                    card.appendChild(name);
+                    topSection.appendChild(img);
+                    topSection.appendChild(name);
+                    card.appendChild(topSection);
 
-                    // --- 🌟 新增：橫向圖標按鈕列 ---
-                    const actionRow = document.createElement('div');
-                    actionRow.style = "display: flex; gap: 5px; width: 100%; margin-top: 5px;";
+                    // --- 🌟 將按鈕包成一塊，靠底對齊 ---
+                    const actionContainer = document.createElement('div');
+                    actionContainer.style = "display: flex; flex-direction: column; gap: 5px; width: 100%; margin-top: auto;";
 
-                    // 1. 圖片下載按鈕
-                    const downloadImgBtn = document.createElement('button');
-                    downloadImgBtn.innerHTML = "🖼️";
-                    downloadImgBtn.title = "下載圖片";
-                    downloadImgBtn.style = "flex: 1; font-size: 1.2rem; padding: 4px 0; border-radius: 6px; border: none; background: var(--clock-bg); cursor: pointer; transition: 0.2s;";
-                    downloadImgBtn.onmouseover = () => downloadImgBtn.style.background = 'var(--accent-shadow)';
-                    downloadImgBtn.onmouseout = () => downloadImgBtn.style.background = 'var(--clock-bg)';
-                    downloadImgBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        const a = document.createElement('a');
-                        a.href = data.image;
-                        a.download = `${data.author}_作業圖片.png`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    };
-                    actionRow.appendChild(downloadImgBtn);
-
+                    // 第 1 排按鈕：播放音訊 (只有在有錄音時才建立)
                     if (data.audio) {
-                        // 2. 音訊播放按鈕
                         const audioBtn = document.createElement('button');
-                        audioBtn.innerHTML = "▶️";
+                        audioBtn.innerHTML = "▶️️ 播放錄音";
                         audioBtn.title = "播放 / 暫停音訊";
-                        audioBtn.style = "flex: 1; font-size: 1.2rem; padding: 4px 0; border-radius: 6px; border: none; background: var(--clock-bg); cursor: pointer; transition: 0.2s;";
-                        audioBtn.onmouseover = () => { if(audioBtn.innerHTML === "▶️") audioBtn.style.background = 'var(--accent-shadow)'; };
-                        audioBtn.onmouseout = () => { if(audioBtn.innerHTML === "▶️") audioBtn.style.background = 'var(--clock-bg)'; };
+                        audioBtn.style = "font-size: 0.75rem; padding: 6px; border-radius: 6px; border: 2px solid var(--accent); background: var(--panel-bg); color: var(--text-main); cursor: pointer; font-weight: bold; transition: 0.2s; width: 100%;";
+                        
+                        audioBtn.onmouseover = () => { if(audioBtn.innerHTML.includes("▶️")) audioBtn.style.background = 'var(--clock-bg)'; };
+                        audioBtn.onmouseout = () => { if(audioBtn.innerHTML.includes("▶️")) audioBtn.style.background = 'var(--panel-bg)'; };
                         
                         const audio = new Audio(data.audio);
                         audioBtn.onclick = (e) => {
                             e.stopPropagation();
                             if (audio.paused) {
                                 audio.play();
-                                audioBtn.innerHTML = "⏸️";
+                                audioBtn.innerHTML = "⏸️ 暫停錄音";
                                 audioBtn.style.background = "var(--success)";
+                                audioBtn.style.color = "white";
+                                audioBtn.style.borderColor = "var(--success)";
                             } else {
                                 audio.pause();
-                                audioBtn.innerHTML = "▶️";
-                                audioBtn.style.background = "var(--clock-bg)";
+                                audioBtn.innerHTML = "▶️ 播放錄音";
+                                audioBtn.style.background = "var(--panel-bg)";
+                                audioBtn.style.color = "var(--text-main)";
+                                audioBtn.style.borderColor = "var(--accent)";
                             }
                         };
                         audio.onended = () => { 
-                            audioBtn.innerHTML = "▶️"; 
-                            audioBtn.style.background = "var(--clock-bg)";
+                            audioBtn.innerHTML = "▶️ 播放錄音"; 
+                            audioBtn.style.background = "var(--panel-bg)";
+                            audioBtn.style.color = "var(--text-main)";
+                            audioBtn.style.borderColor = "var(--accent)";
                         };
-                        actionRow.appendChild(audioBtn);
-
-                        // 3. 音訊下載按鈕
-                        const downloadAudioBtn = document.createElement('button');
-                        downloadAudioBtn.innerHTML = "🎵";
-                        downloadAudioBtn.title = "下載音訊";
-                        downloadAudioBtn.style = "flex: 1; font-size: 1.2rem; padding: 4px 0; border-radius: 6px; border: none; background: var(--clock-bg); cursor: pointer; transition: 0.2s;";
-                        downloadAudioBtn.onmouseover = () => downloadAudioBtn.style.background = 'var(--accent-shadow)';
-                        downloadAudioBtn.onmouseout = () => downloadAudioBtn.style.background = 'var(--clock-bg)';
-                        downloadAudioBtn.onclick = (e) => {
-                            e.stopPropagation();
-                            const a = document.createElement('a');
-                            a.href = data.audio;
-                            a.download = `${data.author}_錄音檔.webm`; 
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                        };
-                        actionRow.appendChild(downloadAudioBtn);
+                        actionContainer.appendChild(audioBtn);
                     }
 
-                    card.appendChild(actionRow);
-                    // -----------------------------
+                    // 第 2 排按鈕：一鍵智能下載 (同時下載圖片與錄音)
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.innerHTML = "📥 下載作業";
+                    downloadBtn.title = "一鍵下載圖片與錄音";
+                    downloadBtn.style = "font-size: 0.75rem; padding: 6px; border-radius: 6px; border: none; background: var(--success); color: white; cursor: pointer; font-weight: bold; transition: 0.2s; width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);";
+                    
+                    downloadBtn.onmouseover = () => { downloadBtn.style.transform = 'translateY(-2px)'; downloadBtn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)'; };
+                    downloadBtn.onmouseout = () => { downloadBtn.style.transform = 'translateY(0)'; downloadBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)'; };
+                    
+                    downloadBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        // 1. 下載圖片
+                        if (data.image) {
+                            const aImg = document.createElement('a');
+                            aImg.href = data.image;
+                            aImg.download = `${data.author}_作業圖片.png`;
+                            document.body.appendChild(aImg);
+                            aImg.click();
+                            document.body.removeChild(aImg);
+                        }
+                        // 2. 下載音訊 (加入微小延遲防止瀏覽器阻擋多重下載)
+                        if (data.audio) {
+                            setTimeout(() => {
+                                const aAudio = document.createElement('a');
+                                aAudio.href = data.audio;
+                                aAudio.download = `${data.author}_錄音檔.webm`; 
+                                document.body.appendChild(aAudio);
+                                aAudio.click();
+                                document.body.removeChild(aAudio);
+                            }, 300);
+                        }
+                    };
+                    actionContainer.appendChild(downloadBtn);
 
+                    card.appendChild(actionContainer);
+
+                    // 刪除按鈕
                     const deleteBtn = document.createElement('button');
                     deleteBtn.innerHTML = '✕';
-                    deleteBtn.style = "position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);";
+                    deleteBtn.style = "position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10;";
                     deleteBtn.onclick = (e) => {
                         e.stopPropagation(); 
                         card.style.transform = 'scale(0)';

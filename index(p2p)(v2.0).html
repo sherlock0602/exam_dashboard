@@ -559,7 +559,7 @@
             <input type="range" id="brush-slider" min="2" max="50" value="4" onchange="app.drawingBoard.setSize(this.value)" title="滑動調整粗細">
         </div>
         <div class="toolbar-group">
-            <button class="tool-btn" style="border-color: var(--danger); color: var(--danger);" onclick="app.drawingBoard.clear()" title="全部清除 (清空畫布)">🗑️️</button>
+            <button class="tool-btn" style="border-color: var(--danger); color: var(--danger);" onclick="app.drawingBoard.clear()" title="全部清除 (清空畫布)">🗑</button>
         </div>
     </div>
 
@@ -918,9 +918,17 @@
                     card.appendChild(img);
                     card.appendChild(name);
 
+                    // --- 🌟 新增：橫向圖標按鈕列 ---
+                    const actionRow = document.createElement('div');
+                    actionRow.style = "display: flex; gap: 5px; width: 100%; margin-top: 5px;";
+
+                    // 1. 圖片下載按鈕
                     const downloadImgBtn = document.createElement('button');
-                    downloadImgBtn.innerHTML = "📥 下載圖片";
-                    downloadImgBtn.style = "font-size: 0.75rem; padding: 5px 8px; border-radius: 5px; border: none; background: var(--success); color: white; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold;";
+                    downloadImgBtn.innerHTML = "🖼️";
+                    downloadImgBtn.title = "下載圖片";
+                    downloadImgBtn.style = "flex: 1; font-size: 1.2rem; padding: 4px 0; border-radius: 6px; border: none; background: var(--clock-bg); cursor: pointer; transition: 0.2s;";
+                    downloadImgBtn.onmouseover = () => downloadImgBtn.style.background = 'var(--accent-shadow)';
+                    downloadImgBtn.onmouseout = () => downloadImgBtn.style.background = 'var(--clock-bg)';
                     downloadImgBtn.onclick = (e) => {
                         e.stopPropagation();
                         const a = document.createElement('a');
@@ -930,34 +938,43 @@
                         a.click();
                         document.body.removeChild(a);
                     };
-                    card.appendChild(downloadImgBtn);
+                    actionRow.appendChild(downloadImgBtn);
 
                     if (data.audio) {
+                        // 2. 音訊播放按鈕
                         const audioBtn = document.createElement('button');
-                        audioBtn.innerHTML = "🎵 播放錄音";
-                        audioBtn.style = "font-size: 0.75rem; padding: 5px 8px; border-radius: 5px; border: none; background: var(--accent); color: white; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold;";
+                        audioBtn.innerHTML = "▶️";
+                        audioBtn.title = "播放 / 暫停音訊";
+                        audioBtn.style = "flex: 1; font-size: 1.2rem; padding: 4px 0; border-radius: 6px; border: none; background: var(--clock-bg); cursor: pointer; transition: 0.2s;";
+                        audioBtn.onmouseover = () => { if(audioBtn.innerHTML === "▶️") audioBtn.style.background = 'var(--accent-shadow)'; };
+                        audioBtn.onmouseout = () => { if(audioBtn.innerHTML === "▶️") audioBtn.style.background = 'var(--clock-bg)'; };
                         
                         const audio = new Audio(data.audio);
-                        audioBtn.onclick = () => {
+                        audioBtn.onclick = (e) => {
+                            e.stopPropagation();
                             if (audio.paused) {
                                 audio.play();
-                                audioBtn.innerHTML = "⏸ 暫停錄音";
+                                audioBtn.innerHTML = "⏸️";
                                 audioBtn.style.background = "var(--success)";
                             } else {
                                 audio.pause();
-                                audioBtn.innerHTML = "🎵 繼續播放";
-                                audioBtn.style.background = "var(--accent)";
+                                audioBtn.innerHTML = "▶️";
+                                audioBtn.style.background = "var(--clock-bg)";
                             }
                         };
                         audio.onended = () => { 
-                            audioBtn.innerHTML = "🎵 播放錄音"; 
-                            audioBtn.style.background = "var(--accent)";
+                            audioBtn.innerHTML = "▶️"; 
+                            audioBtn.style.background = "var(--clock-bg)";
                         };
-                        card.appendChild(audioBtn);
+                        actionRow.appendChild(audioBtn);
 
+                        // 3. 音訊下載按鈕
                         const downloadAudioBtn = document.createElement('button');
-                        downloadAudioBtn.innerHTML = "📥 下載音訊";
-                        downloadAudioBtn.style = "font-size: 0.75rem; padding: 5px 8px; border-radius: 5px; border: none; background: var(--success); color: white; cursor: pointer; width: 100%; margin-top: 5px; font-weight: bold;";
+                        downloadAudioBtn.innerHTML = "🎵";
+                        downloadAudioBtn.title = "下載音訊";
+                        downloadAudioBtn.style = "flex: 1; font-size: 1.2rem; padding: 4px 0; border-radius: 6px; border: none; background: var(--clock-bg); cursor: pointer; transition: 0.2s;";
+                        downloadAudioBtn.onmouseover = () => downloadAudioBtn.style.background = 'var(--accent-shadow)';
+                        downloadAudioBtn.onmouseout = () => downloadAudioBtn.style.background = 'var(--clock-bg)';
                         downloadAudioBtn.onclick = (e) => {
                             e.stopPropagation();
                             const a = document.createElement('a');
@@ -967,8 +984,11 @@
                             a.click();
                             document.body.removeChild(a);
                         };
-                        card.appendChild(downloadAudioBtn);
+                        actionRow.appendChild(downloadAudioBtn);
                     }
+
+                    card.appendChild(actionRow);
+                    // -----------------------------
 
                     const deleteBtn = document.createElement('button');
                     deleteBtn.innerHTML = '✕';
@@ -1232,7 +1252,6 @@
                 if (win.classList.contains('active')) {
                     win.classList.remove('active');
                     
-                    // 🌟 新增：如果隱藏的是分貝計，強制關閉麥克風
                     if (id === 'win-sonichud') {
                         app.sonicHUD.stop();
                     }

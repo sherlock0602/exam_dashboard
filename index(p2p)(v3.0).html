@@ -1847,7 +1847,7 @@
                 gifEl.src = gifUrl;
                 gifEl.style.position = 'fixed'; gifEl.style.zIndex = '99999'; gifEl.style.pointerEvents = 'none'; 
                 gifEl.style.left = (rect.right - 30) + 'px'; gifEl.style.top = (rect.top + rect.height / 2) + 'px';
-                gifEl.style.transform = 'translateY(-50%)'; gifEl.style.width = '400px';
+                gifEl.style.transform = 'translateY(-50%)'; gifEl.style.width = '500px';
                 document.body.appendChild(gifEl);
                 setTimeout(() => { gifEl.remove(); if (this.data.alertGifBlob) URL.revokeObjectURL(gifUrl); }, this.data.gifDuration); 
             },

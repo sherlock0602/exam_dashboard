@@ -262,12 +262,12 @@
         .btn-delete:hover { background: var(--danger); color: #fff; }
 
         .exam-finished { background-color: var(--panel-bg) !important; border: 2px solid var(--finished-border) !important; border-left: 6px solid #ff003c !important; position: relative; overflow: hidden; background-image: linear-gradient(0deg, transparent 0%, transparent 20%, rgba(57, 255, 20, 0.6) 20%, rgba(57, 255, 20, 0.6) 21%, transparent 21%, transparent 25%, rgba(255, 0, 255, 0.6) 25%, rgba(255, 0, 255, 0.6) 26.5%, transparent 26.5%, transparent 28%, rgba(0, 255, 255, 0.6) 28%, rgba(0, 255, 255, 0.6) 29%, transparent 29%, transparent 60%, rgba(57, 255, 20, 0.6) 60%, rgba(57, 255, 20, 0.6) 60.5%, transparent 60.5%, transparent 63%, rgba(255, 0, 60, 0.6) 63%, rgba(255, 0, 60, 0.6) 64%, transparent 64%, transparent 68%, rgba(255, 0, 255, 0.6) 68%, rgba(255, 0, 255, 0.6) 69.5%, transparent 69.5%, transparent 85%, rgba(0, 255, 255, 0.6) 85%, rgba(0, 255, 255, 0.6) 86%, transparent 86%, transparent 100%) !important; background-size: 100% 100% !important; animation: screen-flicker-light 0.4s 1 forwards !important; }
-.exam-finished .exam-header > span, .exam-finished .exam-time { color: var(--text-main) !important; text-shadow: -1px 0 0 rgba(0,229,255,0.5), 1px 0 0 rgba(255,0,60,0.5) !important; position: relative; z-index: 2; }
-.exam-finished .progress-bg { display: none !important; }
-.exam-finished .btn-delete { background: transparent !important; border: 2px solid rgba(255, 0, 60, 0.5) !important; color: #ff003c !important; position: relative; z-index: 2; }
-.exam-finished .btn-delete:hover { background: #ff003c !important; color: #fff !important; }
-.exam-finished::before { content: 'NO SIGNAL'; position: absolute; bottom: 8px; right: 45px; font-size: 0.65rem; color: #ff003c; background: var(--panel-bg); padding: 2px 6px; font-family: 'Poppins', monospace; border: 1px solid rgba(255, 0, 60, 0.5); border-radius: 4px; z-index: 2; }
-@keyframes screen-flicker-light { 0% { transform: translateY(0); filter: brightness(1); } 20% { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 4px 10px rgba(255,0,60,0.2); } 40% { transform: translateY(2px); } 100% { transform: translateY(0); filter: none; } }
+        .exam-finished .exam-header > span, .exam-finished .exam-time { color: var(--text-main) !important; text-shadow: -1px 0 0 rgba(0,229,255,0.5), 1px 0 0 rgba(255,0,60,0.5) !important; position: relative; z-index: 2; }
+        .exam-finished .progress-bg { display: none !important; }
+        .exam-finished .btn-delete { background: transparent !important; border: 2px solid rgba(255, 0, 60, 0.5) !important; color: #ff003c !important; position: relative; z-index: 2; }
+        .exam-finished .btn-delete:hover { background: #ff003c !important; color: #fff !important; }
+        .exam-finished::before { content: 'NO SIGNAL'; position: absolute; bottom: 8px; right: 45px; font-size: 0.65rem; color: #ff003c; background: var(--panel-bg); padding: 2px 6px; font-family: 'Poppins', monospace; border: 1px solid rgba(255, 0, 60, 0.5); border-radius: 4px; z-index: 2; }
+        @keyframes screen-flicker-light { 0% { transform: translateY(0); filter: brightness(1); } 20% { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 4px 10px rgba(255,0,60,0.2); } 40% { transform: translateY(2px); } 100% { transform: translateY(0); filter: none; } }
         
         #win-clock .window-content { padding: 0; display: flex; align-items: stretch; justify-content: stretch; overflow: hidden; }
         #clock { font-weight: 900; text-align: center; color: var(--accent); font-family: 'Poppins', sans-serif; letter-spacing: 2px; font-size: 3.5rem; background: transparent; display: flex; justify-content: center; align-items: center; flex: 1; height: 100%; width: 100%; margin: 0; line-height: 1; overflow: hidden; white-space: nowrap; }
@@ -367,6 +367,65 @@
             display: flex; align-items: center; gap: 10px; font-size: 0.95rem; border: 1px solid transparent;
         }
         .bookmark-item:hover { background: var(--clock-bg); border-color: var(--window-border); color: var(--accent); transform: translateX(4px); }
+
+        /* ==========================================
+           ☄️ 隱藏版：流星群 (自訂頻率 JS 控制版)
+           ========================================== */
+        .shooting-star {
+            position: fixed;
+            left: 110%;
+            transform-origin: left center;
+            background: linear-gradient(to left, #fff 0%, rgba(116, 185, 255, 0.6) 40%, transparent 100%);
+            height: 2px;
+            border-radius: 50px;
+            filter: drop-shadow(0 0 6px rgba(116, 185, 255, 0.8));
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .star-1 { top: -5%; }
+        .star-2 { top: -15%; animation-delay: 0.8s; }
+        .star-3 { top: 5%; left: 100%; animation-delay: 1.5s; }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            right: -2px; 
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 4px rgba(255, 255, 255, 1), 0 0 20px 8px rgba(116, 185, 255, 0.8);
+        }
+
+        /* 只有當 JS 加上 active 類別時，才執行 6 秒的完美飛行 */
+        .shooting-star.active {
+            animation: meteor-flight 6s linear forwards;
+        }
+
+        @keyframes meteor-flight {
+            0% {
+                transform: rotate(155deg) translateX(0) translateY(0);
+                width: 0px; opacity: 0;
+            }
+            5% { opacity: 1; width: 150px; }
+            25% { 
+                transform: rotate(155deg) translateX(120vw) translateY(8vh); 
+                width: 700px; opacity: 1;
+            }
+            40% { width: 700px; opacity: 0.9; }
+            50% { 
+                transform: rotate(155deg) translateX(250vw) translateY(0);
+                width: 100px; opacity: 0;
+            }
+            100% {
+                transform: rotate(155deg) translateX(250vw) translateY(0);
+                width: 0px; opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -495,7 +554,6 @@
             <button class="dock-btn" onclick="app.toggleWeather()" title="天氣切換"><svg class="svg-icon" viewBox="0 0 24 24"><use href="#icon-weather"></use></svg></button>
             <button class="dock-btn" onclick="app.toggleTheme()" title="主題切換"><svg class="svg-icon" viewBox="0 0 24 24"><use href="#icon-palette"></use></svg></button>
             <button class="dock-btn" onclick="app.openSettings()" title="系統設定"><svg class="svg-icon" viewBox="0 0 24 24"><use href="#icon-settings"></use></svg></button>
-            <!-- 🖥️ 新增：全螢幕按鈕 -->
             <button class="dock-btn" onclick="app.toggleFullscreen()" title="全螢幕模式"><svg class="svg-icon" viewBox="0 0 24 24"><use href="#icon-maximize"></use></svg></button>
         </div>
     </div>
@@ -503,6 +561,9 @@
     <div id="bookmark-menu" class="bookmark-menu"></div>
 
     <div id="desktop">
+        <div class="shooting-star star-1"></div>
+        <div class="shooting-star star-2"></div>
+        <div class="shooting-star star-3"></div>
         <canvas id="drawing-canvas"></canvas>
         <div id="weather-layer"></div>
         <audio id="rain-audio" loop src="https://actions.google.com/sounds/v1/weather/heavy_rain.ogg"></audio>
@@ -746,9 +807,26 @@
             <div class="tabs-container">
                 <button id="btn-tab-misc" class="tab-btn active" onclick="app.switchTab('misc')">一般設定</button>
                 <button id="btn-tab-periods" class="tab-btn" onclick="app.switchTab('periods')">節次時間</button>
-                <button id="btn-tab-bookmarks" class="tab-btn" onclick="app.switchTab('bookmarks')">網頁書籤</button> </div>
+                <button id="btn-tab-bookmarks" class="tab-btn" onclick="app.switchTab('bookmarks')">網頁書籤</button> 
+            </div>
             
             <div id="tab-misc" class="tab-pane active">
+                <div class="setting-row">
+                    <span>☄️ 流星特效開關</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-meteor" onchange="document.getElementById('meteor-interval-row').style.display = this.checked ? 'flex' : 'none';">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row" id="meteor-interval-row">
+                    <span>⏳ 流星出現頻率</span>
+                    <select id="meteor-interval-select" style="padding: 4px 8px; border-radius: 8px; border: 1px solid var(--window-border); background: var(--panel-bg); color: var(--text-main); font-weight: bold; outline: none; cursor: pointer;">
+                        <option value="60000">每 1 分鐘</option>
+                        <option value="180000">每 3 分鐘</option>
+                        <option value="300000">每 5 分鐘</option>
+                        <option value="600000">每 10 分鐘</option>
+                    </select>
+                </div>
                 <div class="setting-row">
                     <span>🍃 效能模式 (關閉動畫/模糊以省電)</span>
                     <label class="switch"><input type="checkbox" id="toggle-eco"><span class="slider"></span></label>
@@ -815,6 +893,9 @@
                 isDraggingAudio: false,
                 windowStates: JSON.parse(localStorage.getItem('windowStates')) || {},
                 isSmallUI: JSON.parse(localStorage.getItem('isSmallUI')) || false,
+                isMeteorEnabled: JSON.parse(localStorage.getItem('isMeteorEnabled') ?? 'true'),
+                meteorInterval: parseInt(localStorage.getItem('meteorInterval')) || 300000,
+                meteorTimer: null,
                 autoHideTopBar: JSON.parse(localStorage.getItem('autoHideTopBar')) || false,
                 isEcoMode: JSON.parse(localStorage.getItem('isEcoMode')) || false,
                 audioPlaylist: [],
@@ -837,6 +918,27 @@
                 intervalId: null, 
                 timeoutId: null, 
                 currentIndex: -1 
+            },
+
+            meteor: {
+                schedule() {
+                    if (app.data.meteorTimer) clearInterval(app.data.meteorTimer);
+                    if (!app.data.isMeteorEnabled) {
+                        document.querySelectorAll('.shooting-star').forEach(el => el.classList.remove('active'));
+                        return;
+                    }
+                    // 啟動計時器
+                    app.data.meteorTimer = setInterval(() => this.fire(), app.data.meteorInterval);
+                },
+                fire() {
+                    // 如果網頁被縮小或在背景執行，就不要浪費效能觸發動畫
+                    if (document.hidden) return; 
+                    document.querySelectorAll('.shooting-star').forEach(el => {
+                        el.classList.remove('active');
+                        void el.offsetWidth; // 強制重繪
+                        el.classList.add('active');
+                    });
+                }
             },
 
             sonicHUD: {
@@ -1147,6 +1249,9 @@
                 
                 setInterval(() => this.tick(), 100);
                 this.tick();
+                
+                // 🚀 初始化流星排程
+                this.meteor.schedule();
             },
 
             initAllInteractiveWindows() { document.querySelectorAll('.os-window').forEach(win => { this.makeWindowInteractive(win); }); },
@@ -1547,12 +1652,12 @@
                 if (customBgInput) {
                     customBgInput.value = this.data.customBg.startsWith('data:') ? '已上傳本地圖片' : this.data.customBg;
                 }
-                // ...下略...
 
                 const savedNotes = localStorage.getItem('studyNotes');
                 if (savedNotes) document.getElementById('notes-area').value = savedNotes;
                 document.getElementById('notes-area').addEventListener('input', (e) => localStorage.setItem('studyNotes', e.target.value));
             },
+            
             toggleTheme() {
                 this.data.currentThemeIndex = (this.data.currentThemeIndex + 1) % this.data.themes.length;
                 const newTheme = this.data.themes[this.data.currentThemeIndex];
@@ -1638,17 +1743,27 @@
                         <span style="color:var(--accent);">~</span> 
                         <input type="time" id="set-p${i}-end" value="${time.end}"></div></div>`;
                 }
+                
+                // 載入設定選項
+                document.getElementById('toggle-meteor').checked = this.data.isMeteorEnabled;
+                document.getElementById('meteor-interval-select').value = this.data.meteorInterval;
+                document.getElementById('meteor-interval-row').style.display = this.data.isMeteorEnabled ? 'flex' : 'none';
+                
                 document.getElementById('toggle-eco').checked = this.data.isEcoMode;
                 document.getElementById('toggle-small-ui').checked = this.data.isSmallUI;
                 document.getElementById('toggle-autohide').checked = this.data.autoHideTopBar;
+                
                 app.bookmarks.renderSettings(); this.switchTab('misc'); document.getElementById('settings-modal').style.display = 'flex'; 
             },
+            
             switchTab(tabId) {
                 document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
                 document.getElementById(`btn-tab-${tabId}`).classList.add('active'); document.getElementById(`tab-${tabId}`).classList.add('active');
             },
+            
             closeSettings() { document.getElementById('settings-modal').style.display = 'none'; },
+            
             saveSettings() {
                 for(let i = 1; i <= 7; i++) {
                     if(!this.data.periodTimes[i]) this.data.periodTimes[i] = {};
@@ -1661,21 +1776,30 @@
                 this.data.isSmallUI = document.getElementById('toggle-small-ui').checked;
                 this.data.autoHideTopBar = document.getElementById('toggle-autohide').checked;
                 
+                // 儲存流星設定並重新套用
+                this.data.isMeteorEnabled = document.getElementById('toggle-meteor').checked;
+                this.data.meteorInterval = parseInt(document.getElementById('meteor-interval-select').value);
+                
                 localStorage.setItem('isEcoMode', JSON.stringify(this.data.isEcoMode));
                 localStorage.setItem('isSmallUI', JSON.stringify(this.data.isSmallUI));
                 localStorage.setItem('autoHideTopBar', JSON.stringify(this.data.autoHideTopBar));
+                localStorage.setItem('isMeteorEnabled', JSON.stringify(this.data.isMeteorEnabled));
+                localStorage.setItem('meteorInterval', this.data.meteorInterval);
 
                 if (this.data.isEcoMode) document.body.classList.add('eco-mode'); else document.body.classList.remove('eco-mode');
                 if (this.data.isSmallUI) document.body.setAttribute('data-ui-scale', 'small'); else document.body.removeAttribute('data-ui-scale');
                 if (this.data.autoHideTopBar) { document.body.setAttribute('data-autohide', 'true'); document.getElementById('top-trigger').style.display = 'block'; } 
                 else { document.body.removeAttribute('data-autohide'); document.getElementById('top-trigger').style.display = 'none'; document.getElementById('top-bar').classList.remove('peek'); }
 
+                this.meteor.schedule(); // 觸發最新流星排程
                 this.closeSettings();
             },
+            
             tick() {
                 const now = new Date(); document.getElementById('clock').textContent = now.toLocaleTimeString('zh-TW', { hour12: false });
                 this.updateProgress(now);
             },
+            
             updateProgress(now = new Date()) {
                 const currentMs = now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000 + now.getMilliseconds();
                 let activeExamIndex = -1;
@@ -1723,7 +1847,7 @@
                 gifEl.src = gifUrl;
                 gifEl.style.position = 'fixed'; gifEl.style.zIndex = '99999'; gifEl.style.pointerEvents = 'none'; 
                 gifEl.style.left = (rect.right - 30) + 'px'; gifEl.style.top = (rect.top + rect.height / 2) + 'px';
-                gifEl.style.transform = 'translateY(-50%)'; gifEl.style.width = '500px';
+                gifEl.style.transform = 'translateY(-50%)'; gifEl.style.width = '400px';
                 document.body.appendChild(gifEl);
                 setTimeout(() => { gifEl.remove(); if (this.data.alertGifBlob) URL.revokeObjectURL(gifUrl); }, this.data.gifDuration); 
             },

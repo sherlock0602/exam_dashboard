@@ -69,21 +69,23 @@
 
         /* 🖼️ 自訂背景主題 */
         body[data-theme="custom"] {
+            /* 加入這行來控制專屬的模糊程度！數字越小越清晰，預設是 14px */
+            --window-blur: blur(6px); 
+
             --bg-color: #2b2b2b; 
-            --panel-bg: rgba(30, 30, 35, 0.45); /* 提升透明度 (原 0.75 -> 0.45) */
+            --panel-bg: rgba(30, 30, 35, 0.45); 
             --text-main: #f0f0f0; 
             --text-muted: #aaaaaa;
-            --accent: #48dbfb; /* 綠色改為科技藍色 */
+            --accent: #48dbfb; 
             --accent-shadow: rgba(72, 219, 251, 0.4);
             --success: #81c784; 
             --warning: #ffb142; 
             --danger: #ff5252;
-            --unfinished-border: #48dbfb; /* 左側邊框配合改為藍色 */
+            --unfinished-border: #48dbfb; 
             --finished-border: #444;
-            --clock-bg: rgba(15, 15, 20, 0.5); /* 提升時鐘區塊透明度 (原 0.8 -> 0.5) */
-            --window-border: rgba(72, 219, 251, 0.4); /* 視窗邊框改為藍色 */
+            --clock-bg: rgba(15, 15, 20, 0.5); 
+            --window-border: rgba(72, 219, 251, 0.4); 
             --window-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            /* 加上 background-repeat 確保不拼貼 */
             background-size: cover !important; background-position: center !important; background-attachment: fixed !important; background-repeat: no-repeat !important;
         }
 
